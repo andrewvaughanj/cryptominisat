@@ -20,6 +20,7 @@
 
 include_directories( ${PROJECT_SOURCE_DIR} )
 include_directories( ${BOSPHORUS_INCLUDE_DIRS} )
+include_directories("/home/avj/folly/root/include")
 
 if (NOT WIN32)
     add_cxx_flag_if_supported("-Wno-bitfield-constant-conversion")
@@ -175,6 +176,8 @@ if (SQLITE3_FOUND)
     )
     SET(cryptoms_lib_link_libs ${cryptoms_lib_link_libs} ${SQLITE3_LIBRARIES})
 endif ()
+
+SET(cryptoms_lib_link_libs ${cryptoms_lib_link_libs} "-L/home/avj/folly/root/lib -lfolly")
 
 add_library(cryptominisat5
     ${cryptoms_lib_files}

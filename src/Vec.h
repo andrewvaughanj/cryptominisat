@@ -21,10 +21,13 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 #ifndef Vec_h
 #define Vec_h
 
+#include <folly/FBVector.h>
+#include <iostream>
+
 #include <cassert>
-#include <new>
 #include <cstdint>
 #include <limits>
+#include <new>
 #include <utility>
 
 #include "XAlloc.h"
@@ -37,9 +40,73 @@ class Watched;
 // Automatically resizable arrays
 //
 // NOTE! Don't use this vector on datatypes that cannot be re-located in memory (with realloc)
+//
+//
 
-template<class T>
-class vec {
+template <class T>
+class vec : public folly::fbvector<T>
+{
+   public:
+    void growTo(uint32_t size)
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        this->resize(size);
+    }
+    void growTo(uint32_t size, const T& pad)
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        this->resize(size, pad);
+    }
+    void shrink(uint32_t nelems)
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        assert(nelems <= this->size());
+        this->erase(this->begin(), this->begin() + nelems);
+    }
+    void insert(uint32_t num)
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        this->resize(this->size() + num);
+    }
+    void push()
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        T temp();
+        push(temp);
+    }
+    void push(const T& elem)
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        this->push_back(elem);
+    }
+    const T& last() const
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        return this->back();
+    }
+    void pop()
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        this->pop_back();
+    }
+    void clear(bool dealloc = false)
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        this->folly::fbvector<T>::clear();
+        this->folly::fbvector<T>::shrink_to_fit();
+    }
+    void shrink_(uint32_t nelems)
+    {
+        // std::cout << __FUNCTION__ << std::endl;
+        shrink(nelems);
+    }
+    void moveTo(vec<T>& dest)
+    {
+        dest = *this;
+    }
+};
+
+#if 0
 public:
     T*  data;
     T* begin()
@@ -320,8 +387,9 @@ inline void vec<Watched>::clear(bool dealloc)
         }
     }
 }
+#endif
 
 //=================================================================================================
-}
+} // namespace CMSat
 
 #endif

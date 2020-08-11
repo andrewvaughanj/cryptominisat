@@ -20,7 +20,7 @@
 
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 enable_language( CXX )
 
@@ -52,6 +52,7 @@ set(CRYPTOMS_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/scripts)
 
 include (GenerateExportHeader)
 include (GNUInstallDirs)
+include_directories("/home/avj/folly/root/include")
 
 # -----------------------------------------------------------------------------
 # Make RelWithDebInfo the default build type if otherwise not set
@@ -887,3 +888,4 @@ install(
     EXPORT ${CRYPTOMINISAT5_EXPORT_NAME}
     DESTINATION "${CRYPTOMINISAT5_INSTALL_CMAKE_DIR}"
 )
+
