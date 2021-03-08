@@ -21,7 +21,9 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 #ifndef Vec_h
 #define Vec_h
 
+#ifdef USE_FOLLY
 #include <folly/FBVector.h>
+#endif
 #include <iostream>
 
 #include <cassert>
@@ -43,6 +45,7 @@ class Watched;
 //
 //
 
+#ifdef USE_FOLLY
 template <class T>
 class vec : public folly::fbvector<T>
 {
@@ -97,6 +100,7 @@ class vec : public folly::fbvector<T>
     }
     void clear(bool dealloc = false)
     {
+        (void)dealloc;
         // std::cout << __FUNCTION__ << std::endl;
         this->folly::fbvector<T>::clear();
         this->folly::fbvector<T>::shrink_to_fit();
@@ -112,7 +116,12 @@ class vec : public folly::fbvector<T>
     }
 };
 
-#if 0
+/* ^^^ USE FOLLY ^^^ */
+#else
+/* vvv !USE FOLLY vvv */
+
+template<class T>
+class vec {
 public:
     T*  data;
     T* begin()
@@ -393,6 +402,7 @@ inline void vec<Watched>::clear(bool dealloc)
         }
     }
 }
+/* ^^^ !USE FOLLY ^^^ */
 #endif
 
 //=================================================================================================

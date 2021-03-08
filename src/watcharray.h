@@ -119,7 +119,11 @@ public:
 
     void prefetch(const size_t at) const
     {
+#ifdef USE_FOLLY
         __builtin_prefetch(watches[at].data());
+#else
+        __builtin_prefetch(watches[at].data);
+#endif
     }
     typedef vec<Watched>* iterator;
     typedef const vec<Watched>* const_iterator;

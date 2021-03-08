@@ -52,7 +52,15 @@ set(CRYPTOMS_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/scripts)
 
 include (GenerateExportHeader)
 include (GNUInstallDirs)
-include_directories("/home/avj/clones/folly/root/include")
+option(ENABLE_FOLLY "Use the Folly library" OFF)
+if (ENABLE_FOLLY)
+  set(FOLLY_ROOT "" CACHE STRING "Path to the Folly install")
+  if ("${FOLLY_ROOT}" STREQUAL "")
+    MESSAGE(FATAL_ERROR "No path to Folly specified")
+  endif()
+  include_directories("${FOLLY_ROOT}/include")
+  add_definitions(-DUSE_FOLLY)
+endif()
 
 # -----------------------------------------------------------------------------
 # Make RelWithDebInfo the default build type if otherwise not set
