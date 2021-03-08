@@ -52,7 +52,7 @@ set(CRYPTOMS_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/scripts)
 
 include (GenerateExportHeader)
 include (GNUInstallDirs)
-include_directories("/home/avj/folly/root/include")
+include_directories("/home/avj/clones/folly/root/include")
 
 # -----------------------------------------------------------------------------
 # Make RelWithDebInfo the default build type if otherwise not set
