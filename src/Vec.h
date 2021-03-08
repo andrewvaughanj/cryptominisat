@@ -50,12 +50,18 @@ class vec : public folly::fbvector<T>
     void growTo(uint32_t size)
     {
         // std::cout << __FUNCTION__ << std::endl;
+        if (this->size() > size)
+            return;
         this->resize(size);
+        assert(this->size() >= size);
     }
     void growTo(uint32_t size, const T& pad)
     {
         // std::cout << __FUNCTION__ << std::endl;
+        if (this->size() > size)
+            return;
         this->resize(size, pad);
+        assert(this->size() >= size);
     }
     void shrink(uint32_t nelems)
     {
