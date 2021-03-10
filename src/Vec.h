@@ -34,6 +34,14 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 
 #include "XAlloc.h"
 
+#define DEBUG_VEC
+
+#ifdef DEBUG_VEC
+#define TRACE_VEC std::cout << __FUNCTION__ << std::endl;
+#else
+#define TRACE_VEC
+#endif
+
 namespace CMSat {
 
 class Watched;
@@ -52,67 +60,88 @@ class vec : public folly::fbvector<T>
    public:
     void growTo(uint32_t size)
     {
-        // std::cout << __FUNCTION__ << std::endl;
+        TRACE_VEC
         if (this->size() > size)
             return;
         this->resize(size);
-        assert(this->size() >= size);
+        assert(this->size() == size);
     }
     void growTo(uint32_t size, const T& pad)
     {
-        // std::cout << __FUNCTION__ << std::endl;
+        TRACE_VEC
         if (this->size() > size)
             return;
         this->resize(size, pad);
-        assert(this->size() >= size);
+        assert(this->size() == size);
     }
     void shrink(uint32_t nelems)
     {
-        // std::cout << __FUNCTION__ << std::endl;
-        assert(nelems <= this->size());
+        TRACE_VEC
+        int orig_size = this->folly::fbvector<T>::size();
+        assert(nelems <= orig_size);
         this->erase(this->begin(), this->begin() + nelems);
+        this->folly::fbvector<T>::shrink_to_fit();
+        assert(this->size() == (orig_size - nelems));
     }
     void insert(uint32_t num)
     {
-        // std::cout << __FUNCTION__ << std::endl;
-        this->resize(this->size() + num);
+        TRACE_VEC
+        int orig_size = this->folly::fbvector<T>::size();
+        growTo(this->size() + num);
+        assert(this->size() == (orig_size + num));
     }
     void push()
     {
-        // std::cout << __FUNCTION__ << std::endl;
+        TRACE_VEC
+        int orig_size = this->folly::fbvector<T>::size();
         T temp();
         push(temp);
+        assert(this->size() == (orig_size + 1));
     }
     void push(const T& elem)
     {
-        // std::cout << __FUNCTION__ << std::endl;
+        TRACE_VEC
+        int orig_size = this->folly::fbvector<T>::size();
         this->push_back(elem);
+        assert(this->size() == (orig_size + 1));
     }
     const T& last() const
     {
-        // std::cout << __FUNCTION__ << std::endl;
+        TRACE_VEC
         return this->back();
     }
     void pop()
     {
-        // std::cout << __FUNCTION__ << std::endl;
+        TRACE_VEC
+        int orig_size = this->folly::fbvector<T>::size();
         this->pop_back();
+        assert(this->size() == (orig_size + 1));
     }
     void clear(bool dealloc = false)
     {
-        (void)dealloc;
-        // std::cout << __FUNCTION__ << std::endl;
+        TRACE_VEC(void) dealloc;
         this->folly::fbvector<T>::clear();
         this->folly::fbvector<T>::shrink_to_fit();
+        assert(this->folly::fbvector<T>::size() == 0);
+        assert(this->folly::fbvector<T>::capacity() == 0);
     }
     void shrink_(uint32_t nelems)
     {
-        // std::cout << __FUNCTION__ << std::endl;
+        TRACE_VEC
+        int orig_size = this->folly::fbvector<T>::size();
         shrink(nelems);
+        assert(this->size() == (orig_size - nelems));
     }
     void moveTo(vec<T>& dest)
     {
+        TRACE_VEC
+        int orig_size = this->folly::fbvector<T>::size();
+        dest.clear(true);
         dest = *this;
+        clear();
+        int final_size = dest.folly::fbvector<T>::size();
+        assert(orig_size == final_size);
+        assert(this->size() == 0);
     }
 };
 
