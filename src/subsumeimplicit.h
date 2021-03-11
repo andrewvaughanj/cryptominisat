@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef SUBSUMEIMPLICIT_H
 #define SUBSUMEIMPLICIT_H
 
-#include <vector>
+#include "cms_vector.h"
 #include "clause.h"
 #include "constants.h"
 #include "solvertypes.h"
@@ -32,8 +32,6 @@ THE SOFTWARE.
 #include "touchlist.h"
 
 namespace CMSat {
-
-using std::vector;
 
 class Solver;
 class Clause;
@@ -72,7 +70,7 @@ private:
     Lit lastLit2;
     Watched* lastBin;
     bool lastRed;
-    vector<Lit> tmplits;
+    cms_vector<Lit> tmplits;
     Stats runStats;
     Stats globalStats;
 
