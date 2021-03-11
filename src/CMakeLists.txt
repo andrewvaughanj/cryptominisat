@@ -180,7 +180,7 @@ if (SQLITE3_FOUND)
 endif ()
 
 if (ENABLE_FOLLY)
-  SET(cryptoms_lib_link_libs ${cryptoms_lib_link_libs} "-L${FOLLY_ROOT}/lib -lfolly")
+  SET(cryptoms_lib_link_libs ${cryptoms_lib_link_libs} "-L${FOLLY_ROOT}/lib -lfolly ${JEMALLOC_ROOT}/lib64/libjemalloc_pic.a")
 endif()
 
 add_library(cryptominisat5
