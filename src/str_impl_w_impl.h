@@ -23,13 +23,12 @@ THE SOFTWARE.
 #ifndef __DISTILLER_IMPL_WITH_IMP__
 #define __DISTILLER_IMPL_WITH_IMP__
 
-#include <vector>
+#include "cms_vector.h"
 #include "clause.h"
 #include "constants.h"
 #include "solvertypes.h"
 #include "cloffset.h"
 #include "watcharray.h"
-using std::vector;
 
 namespace CMSat {
 
@@ -64,8 +63,8 @@ private:
 
         //For delayed enqueue and binary adding
         //Used for strengthening
-        vector<Lit> toEnqueue;
-        vector<BinaryClause> binsToAdd;
+        cms_vector<Lit> toEnqueue;
+        cms_vector<BinaryClause> binsToAdd;
 
         void clear()
         {
@@ -83,7 +82,7 @@ private:
     };
     StrImplicitData str_impl_data;
     int64_t timeAvailable;
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
 };
 
 }

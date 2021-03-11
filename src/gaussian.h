@@ -30,7 +30,7 @@ THE SOFTWARE.
 #ifndef ENHANCEGAUSSIAN_H
 #define ENHANCEGAUSSIAN_H
 
-#include <vector>
+#include "cms_vector.h"
 #include <limits>
 #include <string>
 #include <utility>
@@ -48,7 +48,6 @@ THE SOFTWARE.
 
 using std::string;
 using std::pair;
-using std::vector;
 
 namespace CMSat {
 
@@ -58,7 +57,7 @@ struct XorReason
 {
     bool must_recalc = true;
     Lit propagated = lit_Undef;
-    vector<Lit> reason;
+    cms_vector<Lit> reason;
 };
 
 class EGaussian {
@@ -66,7 +65,7 @@ class EGaussian {
       EGaussian(
         Solver* solver,
         const uint32_t matrix_no,
-        const vector<Xor>& xorclauses
+        const cms_vector<Xor>& xorclauses
     );
     ~EGaussian();
 
@@ -80,7 +79,7 @@ class EGaussian {
         GaussQData& gqd
     );
 
-    vector<Lit>* get_reason(uint32_t row);
+    cms_vector<Lit>* get_reason(uint32_t row);
 
     // when basic variable is touched , eliminate one col
     void eliminate_col(
@@ -98,7 +97,7 @@ class EGaussian {
     void check_watchlist_sanity();
     uint32_t get_matrix_no();
 
-    vector<Xor> xorclauses;
+    cms_vector<Xor> xorclauses;
 
   private:
     Solver* solver;   // orignal sat solver
@@ -118,8 +117,8 @@ class EGaussian {
         const uint32_t v, const uint32_t row_num) const;
 
     //Reason generation
-    vector<XorReason> xor_reasons;
-    vector<Lit> tmp_clause;
+    cms_vector<XorReason> xor_reasons;
+    cms_vector<Lit> tmp_clause;
     uint32_t get_max_level(const GaussQData& gqd, const uint32_t row_n);
 
     //Initialisation
@@ -159,20 +158,20 @@ class EGaussian {
 
     //Is the clause at this ROW satisfied already?
     //satisfied_xors[decision_level][row] tells me that
-    vector<char> satisfied_xors;
+    cms_vector<char> satisfied_xors;
 
     // Someone is responsible for this column if TRUE
     ///we always WATCH this variable
-    vector<char> var_has_resp_row;
+    cms_vector<char> var_has_resp_row;
 
     ///row_to_var_non_resp[ROW] gives VAR it's NOT responsible for
     ///we always WATCH this variable
-    vector<uint32_t> row_to_var_non_resp;
+    cms_vector<uint32_t> row_to_var_non_resp;
 
 
     PackedMatrix mat;
-    vector<uint32_t>  var_to_col; ///var->col mapping. Index with VAR
-    vector<uint32_t> col_to_var; ///col->var mapping. Index with COL
+    cms_vector<uint32_t>  var_to_col; ///var->col mapping. Index with VAR
+    cms_vector<uint32_t> col_to_var; ///col->var mapping. Index with COL
     uint32_t num_rows = 0;
     uint32_t num_cols = 0;
 
@@ -184,7 +183,7 @@ class EGaussian {
     void update_cols_vals_set(const Lit lit1);
 
     //Data to free (with delete[] x)
-    vector<int64_t*> tofree;
+    cms_vector<int64_t*> tofree;
 
 
     ///////////////

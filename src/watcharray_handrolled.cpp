@@ -28,7 +28,7 @@ void watch_array::consolidate()
 {
     size_t total_needed = total_needed_during_consolidate();
 
-    vector<Mem> newmems;
+    cms_vector<Mem> newmems;
     size_t at_watches = 0;
     //size_t last_needed = 0;
     while(total_needed > 0) {

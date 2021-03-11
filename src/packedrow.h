@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 //#define DEBUG_ROW
 
-#include <vector>
+#include "cms_vector.h"
 #include <cstdint>
 #include <string.h>
 #include <iostream>
@@ -40,7 +40,6 @@ THE SOFTWARE.
 
 namespace CMSat {
 
-using std::vector;
 
 class PackedMatrix;
 class EGaussian;
@@ -238,7 +237,7 @@ public:
     template<class T>
     void set(
         const T& v,
-        const vector<uint32_t>& var_to_col,
+        const cms_vector<uint32_t>& var_to_col,
         const uint32_t num_cols)
     {
         assert(size == ((int)num_cols/64) + ((bool)(num_cols % 64)));
@@ -256,16 +255,16 @@ public:
 
     // using find nonbasic and basic value
     uint32_t find_watchVar(
-        vector<Lit>& tmp_clause,
-        const vector<uint32_t>& col_to_var,
-        vector<char> &var_has_resp_row,
+        cms_vector<Lit>& tmp_clause,
+        const cms_vector<uint32_t>& col_to_var,
+        cms_vector<char> &var_has_resp_row,
         uint32_t& non_resp_var);
 
     // using find nonbasic value after watch list is enter
     gret propGause(
-        const vector<lbool>& assigns,
-        const vector<uint32_t>& col_to_var,
-        vector<char> &var_has_resp_row,
+        const cms_vector<lbool>& assigns,
+        const cms_vector<uint32_t>& col_to_var,
+        cms_vector<char> &var_has_resp_row,
         uint32_t& new_resp_var,
         PackedRow& tmp_col,
         PackedRow& tmp_col2,
@@ -275,9 +274,9 @@ public:
     );
 
     void get_reason(
-        vector<Lit>& tmp_clause,
-        const vector<lbool>& assigns,
-        const vector<uint32_t>& col_to_var,
+        cms_vector<Lit>& tmp_clause,
+        const cms_vector<lbool>& assigns,
+        const cms_vector<uint32_t>& col_to_var,
         PackedRow& cols_vals,
         PackedRow& tmp_col2,
         Lit prop

@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef __DISTILLERALL_WITH_ALL_H__
 #define __DISTILLERALL_WITH_ALL_H__
 
-#include <vector>
+#include "cms_vector.h"
 #include "clause.h"
 #include "constants.h"
 #include "solvertypes.h"
@@ -32,7 +32,6 @@ THE SOFTWARE.
 
 namespace CMSat {
 
-using std::vector;
 
 class Solver;
 class Clause;
@@ -79,12 +78,12 @@ class DistillerLong {
             , const bool red
             , const ClauseStats& stats
         );
-        bool distill_long_cls_all(vector<ClOffset>& offs, double time_mult);
-        bool go_through_clauses(vector<ClOffset>& cls);
+        bool distill_long_cls_all(cms_vector<ClOffset>& offs, double time_mult);
+        bool go_through_clauses(cms_vector<ClOffset>& cls);
         Solver* solver;
 
         //For distill
-        vector<Lit> lits;
+        cms_vector<Lit> lits;
         uint64_t oldBogoProps;
         int64_t maxNumProps;
         int64_t orig_maxNumProps;

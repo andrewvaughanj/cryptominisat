@@ -175,7 +175,7 @@ bool Yalsat::init_problem()
     #endif
 
     //where all clauses' literals are
-    vector<Lit> this_clause;
+    cms_vector<Lit> this_clause;
     for(size_t i2 = 0; i2 < solver->nVars()*2; i2++) {
         Lit lit = Lit::toLit(i2);
         for(const Watched& w: solver->watches[lit]) {

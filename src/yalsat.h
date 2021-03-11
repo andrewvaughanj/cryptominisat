@@ -58,7 +58,7 @@ private:
     enum class add_cl_ret {added_cl, skipped_cl, unsat};
     template<class T>
     add_cl_ret add_this_clause(const T& cl);
-    vector<int> yals_lits;
+    cms_vector<int> yals_lits;
 };
 
 }

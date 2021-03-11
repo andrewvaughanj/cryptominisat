@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 #include <stdlib.h>
 #include <map>
-#include <vector>
+#include "cms_vector.h"
 
 namespace CMSat {
 
@@ -41,7 +41,6 @@ class Solver;
 class PropEngine;
 
 using std::map;
-using std::vector;
 
 /**
 @brief Allocates memory for (xor) clauses
@@ -97,7 +96,7 @@ class ClauseAllocator {
 
     private:
         void update_offsets(
-            vector<ClOffset>& offsets,
+            cms_vector<ClOffset>& offsets,
             ClOffset* newDataStart,
             ClOffset*& new_ptr
         );

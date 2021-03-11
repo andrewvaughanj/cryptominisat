@@ -21,14 +21,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ***********************************************/
 
-#include <vector>
+#include "cms_vector.h"
 #include <cmath>
 
 #include "solver.h"
 #include "sqlstats.h"
 #include "satzilla_features_calc.h"
 
-using std::vector;
 using namespace CMSat;
 
 template<class Function, class Function2>
@@ -274,7 +273,7 @@ void SatZillaFeaturesCalc::calculate_extra_var_stats()
 }
 
 void SatZillaFeaturesCalc::calculate_cl_distributions(
-    const vector<ClOffset>& clauses
+    const cms_vector<ClOffset>& clauses
     , struct SatZillaFeatures::Distrib& distrib_data
 ) {
     if (clauses.empty()) {

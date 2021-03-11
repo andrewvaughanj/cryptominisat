@@ -818,7 +818,7 @@ void Main::add_supported_options()
         , "Assumptions file")
 
     //these a kind of special and determine positional options' meanings
-    ("input", po::value< vector<string> >(), "file(s) to read")
+    ("input", po::value< std::vector<string> >(), "file(s) to read")
     ("drat,d", po::value(&dratfilname)
         , "Put DRAT verification information into this file")
     ;
@@ -1222,7 +1222,7 @@ void Main::manually_parse_some_options()
             std::exit(-1);
         }
 
-        vector<string> solution = vm["input"].as<vector<string> >();
+        std::vector<string> solution = vm["input"].as<std::vector<string> >();
         if (solution.size() > 1) {
             cout << "ERROR: When post-processing you must give only the solution as the positional argument."
             << endl
@@ -1232,7 +1232,7 @@ void Main::manually_parse_some_options()
         }
         conf.solution_file = solution[0];
     } else if (vm.count("input")) {
-        filesToRead = vm["input"].as<vector<string> >();
+        filesToRead = vm["input"].as<std::vector<string> >();
         if (conf.preprocess == 1) {
             filesToRead.resize(1);
         }
@@ -1248,13 +1248,13 @@ void Main::manually_parse_some_options()
     }
 
     if (conf.preprocess == 1) {
-        if (vm["input"].as<vector<string> >().size() + vm.count("drat") > 2) {
+        if (vm["input"].as<std::vector<string> >().size() + vm.count("drat") > 2) {
             cout << "ERROR: When preprocessing, you must give the simplified file name as 2nd argument" << endl;
             cout << "You gave this many inputs: "
-                << vm["input"].as<vector<string> >().size()+vm.count("drat")
+                << vm["input"].as<std::vector<string> >().size()+vm.count("drat")
                 << endl;
 
-            for(const string& s: vm["input"].as<vector<string> >()) {
+            for(const string& s: vm["input"].as<std::vector<string> >()) {
                 cout << " --> " << s << endl;
             }
             if (vm.count("drat")) {
@@ -1262,8 +1262,8 @@ void Main::manually_parse_some_options()
             }
             exit(-1);
         }
-        if (vm["input"].as<vector<string> >().size() > 1) {
-            conf.simplified_cnf = vm["input"].as<vector<string> >()[1];
+        if (vm["input"].as<std::vector<string> >().size() > 1) {
+            conf.simplified_cnf = vm["input"].as<std::vector<string> >()[1];
         } else {
             try {
                 conf.simplified_cnf = vm["drat"].as<string>();
@@ -1363,7 +1363,7 @@ void Main::dump_red_file()
     }
 
     bool ret = true;
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
     solver->start_getting_small_clauses(dump_red_max_len, dump_red_max_glue);
     while(ret) {
         ret = solver->get_next_small_clause(lits);
@@ -1503,7 +1503,7 @@ lbool Main::multi_solutions()
 
 void Main::ban_found_solution()
 {
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
     if (sampling_vars.empty()) {
         //all of the solution
         for (uint32_t var = 0; var < solver->nVars(); var++) {

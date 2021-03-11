@@ -27,8 +27,7 @@ THE SOFTWARE.
 #include "watched.h"
 #include "clause.h"
 #include "touchlist.h"
-#include <vector>
-using std::vector;
+#include "cms_vector.h"
 
 namespace CMSat {
 
@@ -62,8 +61,8 @@ public:
 private:
     Solver* solver;
     OccSimplifier* simplifier;
-    vector<uint16_t>& seen;
-    vector<uint8_t>& seen2;
+    cms_vector<uint16_t>& seen;
+    cms_vector<uint8_t>& seen2;
 
     Stats runStats;
     Stats globalStats;
@@ -135,11 +134,11 @@ private:
     struct m_cls_lits_and_red
     {
         //Used during removal to lower overhead
-        m_cls_lits_and_red(const vector<Lit>& _lits, bool _red) :
+        m_cls_lits_and_red(const cms_vector<Lit>& _lits, bool _red) :
             lits(_lits)
             , red(_red)
         {}
-        vector<Lit> lits;
+        cms_vector<Lit> lits;
         bool red;
     };
     size_t calc_watch_irred_size(const Lit lit) const;
@@ -163,26 +162,26 @@ private:
         , const lit_pair lit_replace
     );
     Clause* find_cl_for_bva(
-        const vector<Lit>& torem
+        const cms_vector<Lit>& torem
         , const bool red
     ) const;
     void fill_m_cls_lits_and_red();
-    vector<Lit> bva_tmp_lits; //To reduce overhead
-    vector<m_cls_lits_and_red> m_cls_lits; //used during removal to lower overhead
-    vector<Lit> to_remove; //to reduce overhead
-    vector<PotentialClause> potential;
-    vector<lit_pair> m_lits;
-    vector<lit_pair> m_lits_this_cl;
-    vector<OccurClause> m_cls;
-    vector<size_t> watch_irred_sizes;
+    cms_vector<Lit> bva_tmp_lits; //To reduce overhead
+    cms_vector<m_cls_lits_and_red> m_cls_lits; //used during removal to lower overhead
+    cms_vector<Lit> to_remove; //to reduce overhead
+    cms_vector<PotentialClause> potential;
+    cms_vector<lit_pair> m_lits;
+    cms_vector<lit_pair> m_lits_this_cl;
+    cms_vector<OccurClause> m_cls;
+    cms_vector<size_t> watch_irred_sizes;
     struct VarBVAOrder
     {
-        explicit VarBVAOrder(vector<size_t>& _watch_irred_sizes) :
+        explicit VarBVAOrder(cms_vector<size_t>& _watch_irred_sizes) :
             watch_irred_sizes(_watch_irred_sizes)
         {}
 
         bool operator()(const uint32_t lit1_uint, const uint32_t lit2_uint) const;
-        vector<size_t>& watch_irred_sizes;
+        cms_vector<size_t>& watch_irred_sizes;
     };
     Heap<VarBVAOrder> var_bva_order;
     TouchList touched;

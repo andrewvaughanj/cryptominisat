@@ -83,7 +83,7 @@ size_t CompHandler::mem_used() const
     return mem;
 }
 
-void CompHandler::createRenumbering(const vector<uint32_t>& vars)
+void CompHandler::createRenumbering(const cms_vector<uint32_t>& vars)
 {
     smallsolver_to_bigsolver.resize(vars.size());
     bigsolver_to_smallsolver.resize(solver->nVars());
@@ -97,7 +97,7 @@ void CompHandler::createRenumbering(const vector<uint32_t>& vars)
     }
 }
 
-bool CompHandler::assumpsInsideComponent(const vector<uint32_t>& vars)
+bool CompHandler::assumpsInsideComponent(const cms_vector<uint32_t>& vars)
 {
     for(uint32_t var: vars) {
         if (solver->var_inside_assumptions(var) != l_Undef) {
@@ -108,12 +108,12 @@ bool CompHandler::assumpsInsideComponent(const vector<uint32_t>& vars)
     return false;
 }
 
-vector<pair<uint32_t, uint32_t> > CompHandler::get_component_sizes() const
+cms_vector<pair<uint32_t, uint32_t> > CompHandler::get_component_sizes() const
 {
-    vector<pair<uint32_t, uint32_t> > sizes;
-    map<uint32_t, vector<uint32_t> > reverseTable = compFinder->getReverseTable();
+    cms_vector<pair<uint32_t, uint32_t> > sizes;
+    map<uint32_t, cms_vector<uint32_t> > reverseTable = compFinder->getReverseTable();
 
-    for (map<uint32_t, vector<uint32_t> >::iterator
+    for (map<uint32_t, cms_vector<uint32_t> >::iterator
         it = reverseTable.begin()
         ; it != reverseTable.end()
         ; ++it
@@ -168,15 +168,15 @@ bool CompHandler::handle()
     #ifdef USE_GAUSS
     solver->clear_gauss_matrices();
     #endif
-    map<uint32_t, vector<uint32_t> > reverseTable = compFinder->getReverseTable();
+    map<uint32_t, cms_vector<uint32_t> > reverseTable = compFinder->getReverseTable();
     assert(num_comps == compFinder->getReverseTable().size());
-    vector<pair<uint32_t, uint32_t> > sizes = get_component_sizes();
+    cms_vector<pair<uint32_t, uint32_t> > sizes = get_component_sizes();
 
     size_t num_comps_solved = 0;
     size_t vars_solved = 0;
     for (uint32_t it = 0; it < sizes.size()-1; ++it) {
         const uint32_t comp = sizes[it].first;
-        vector<uint32_t>& vars = reverseTable[comp];
+        cms_vector<uint32_t>& vars = reverseTable[comp];
         const bool ok = try_to_solve_component(it, comp, vars, num_comps);
         if (!ok) {
             break;
@@ -220,7 +220,7 @@ bool CompHandler::handle()
 bool CompHandler::try_to_solve_component(
     const uint32_t comp_at
     , const uint32_t comp
-    , const vector<uint32_t>& vars_orig
+    , const cms_vector<uint32_t>& vars_orig
     , const size_t num_comps
 ) {
     for(const uint32_t var: vars_orig) {
@@ -246,11 +246,11 @@ bool CompHandler::try_to_solve_component(
 bool CompHandler::solve_component(
     const uint32_t comp_at
     , const uint32_t comp
-    , const vector<uint32_t>& vars_orig
+    , const cms_vector<uint32_t>& vars_orig
     , const size_t num_comps
 ) {
     assert(! (solver->drat->enabled() || solver->conf.simulate_drat) );
-    vector<uint32_t> vars(vars_orig);
+    cms_vector<uint32_t> vars(vars_orig);
     components_solved++;
 
     //Sort and renumber
@@ -338,7 +338,7 @@ void CompHandler::check_local_vardata_sanity()
 
 void CompHandler::check_solution_is_unassigned_in_main_solver(
     const SATSolver* newSolver
-    , const vector<uint32_t>& vars
+    , const cms_vector<uint32_t>& vars
 ) {
     for (size_t i = 0; i < vars.size(); ++i) {
         uint32_t var = vars[i];
@@ -350,7 +350,7 @@ void CompHandler::check_solution_is_unassigned_in_main_solver(
 
 void CompHandler::save_solution_to_savedstate(
     const SATSolver* newSolver
-    , const vector<uint32_t>& vars
+    , const cms_vector<uint32_t>& vars
     , const uint32_t comp
 ) {
     assert(savedState.size() == solver->nVarsOuter());
@@ -369,7 +369,7 @@ void CompHandler::save_solution_to_savedstate(
 void CompHandler::move_decision_level_zero_vars_here(
     const SATSolver* newSolver
 ) {
-    const vector<Lit> zero_assigned = newSolver->get_zero_assigned_lits();
+    const cms_vector<Lit> zero_assigned = newSolver->get_zero_assigned_lits();
     for (Lit lit: zero_assigned) {
         assert(lit.var() < newSolver->nVars());
         assert(lit.var() < smallsolver_to_bigsolver.size());
@@ -425,7 +425,7 @@ and making it non-decision in the old solver.
 */
 void CompHandler::moveVariablesBetweenSolvers(
     SATSolver* newSolver
-    , const vector<uint32_t>& vars
+    , const cms_vector<uint32_t>& vars
     , const uint32_t comp
 ) {
     for(const uint32_t var: vars) {
@@ -440,13 +440,13 @@ void CompHandler::moveVariablesBetweenSolvers(
 }
 
 void CompHandler::moveClausesLong(
-    vector<ClOffset>& cs
+    cms_vector<ClOffset>& cs
     , SATSolver* newSolver
     , const uint32_t comp
 ) {
-    vector<Lit> tmp;
+    cms_vector<Lit> tmp;
 
-    vector<ClOffset>::iterator i, j, end;
+    cms_vector<ClOffset>::iterator i, j, end;
     for (i = j = cs.begin(), end = cs.end()
         ; i != end
         ; ++i
@@ -571,7 +571,7 @@ void CompHandler::move_binary_clause(
             numRemovedHalfRed++;
         } else {
             //Save backup
-            saveClause(vector<Lit>{lit, lit2});
+            saveClause(cms_vector<Lit>{lit, lit2});
 
             newSolver->add_clause(tmp_lits);
             numRemovedHalfIrred++;
@@ -590,7 +590,7 @@ void CompHandler::move_binary_clause(
 void CompHandler::moveClausesImplicit(
     SATSolver* newSolver
     , const uint32_t comp
-    , const vector<uint32_t>& vars
+    , const cms_vector<uint32_t>& vars
 ) {
     numRemovedHalfIrred = 0;
     numRemovedHalfRed = 0;
@@ -632,7 +632,7 @@ void CompHandler::moveClausesImplicit(
     solver->binTri.redBins -= numRemovedHalfRed/2;
 }
 
-void CompHandler::addSavedState(vector<lbool>& solution)
+void CompHandler::addSavedState(cms_vector<lbool>& solution)
 {
     //Enqueue them. They may need to be extended, so enqueue is needed
     //manipulating "model" may not be good enough
@@ -686,7 +686,7 @@ void CompHandler::readdRemovedClauses()
         val = l_Undef;
     }
 
-    vector<Lit> tmp;
+    cms_vector<Lit> tmp;
     size_t at = 0;
     for (uint32_t sz: removedClauses.sizes) {
 
@@ -748,7 +748,7 @@ uint32_t CompHandler::dump_removed_clauses(std::ostream* outfile) const
         return removedClauses.sizes.size();
 
     uint32_t num_cls = 0;
-    vector<Lit> tmp;
+    cms_vector<Lit> tmp;
     size_t at = 0;
     for (uint32_t size :removedClauses.sizes) {
         tmp.clear();

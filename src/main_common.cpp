@@ -53,7 +53,7 @@ void MainCommon::handle_drat_option()
     }
 }
 
-uint32_t MainCommon::print_model(CMSat::SATSolver* solver, std::ostream* os, std::vector<uint32_t>* only)
+uint32_t MainCommon::print_model(CMSat::SATSolver* solver, std::ostream* os, cms_vector<uint32_t>* only)
 {
     *os << "v ";
     size_t line_size = 2;

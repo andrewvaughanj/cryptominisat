@@ -25,10 +25,9 @@ THE SOFTWARE.
 
 #include <stdlib.h>
 #include "watched.h"
-#include <vector>
+#include "cms_vector.h"
 
 namespace CMSat {
-using std::vector;
 
 struct watch_array;
 
@@ -82,9 +81,9 @@ struct OffsAndNum
 
 struct watch_subarray
 {
-    vector<Elem>::iterator base_at;
+    cms_vector<Elem>::iterator base_at;
     watch_array* base;
-    explicit watch_subarray(vector<Elem>::iterator _base_at, watch_array* _base) :
+    explicit watch_subarray(cms_vector<Elem>::iterator _base_at, watch_array* _base) :
         base_at(_base_at)
         , base(_base)
     {}
@@ -108,9 +107,9 @@ struct watch_subarray
 
 struct watch_subarray_const
 {
-    vector<Elem>::const_iterator base_at;
+    cms_vector<Elem>::const_iterator base_at;
     const watch_array* base;
-    explicit watch_subarray_const(vector<Elem>::const_iterator _base_at, const watch_array* _base) :
+    explicit watch_subarray_const(cms_vector<Elem>::const_iterator _base_at, const watch_array* _base) :
         base_at(_base_at)
         , base(_base)
     {}
@@ -135,13 +134,13 @@ struct watch_array
     const static size_t WATCH_MIN_SIZE_ONE_ALLOC_LATER = 50ULL*1000ULL*1000ULL;
     const static size_t WATCH_MAX_SIZE_ONE_ALLOC = (1ULL<<24)-1;
 
-    vector<Elem> watches;
-    vector<Mem> mems;
+    cms_vector<Elem> watches;
+    cms_vector<Mem> mems;
     size_t free_mem_used = 0;
     size_t free_mem_not_used = 0;
 
     //at least 2**N elements in there
-    vector<vector<OffsAndNum> > free_mem;
+    cms_vector<cms_vector<OffsAndNum> > free_mem;
 
     watch_array()
     {
@@ -318,9 +317,9 @@ struct watch_array
 
     struct iterator
     {
-        vector<Elem>::iterator it;
+        cms_vector<Elem>::iterator it;
         watch_array* base;
-        explicit iterator(vector<Elem>::iterator _it, watch_array* _base) :
+        explicit iterator(cms_vector<Elem>::iterator _it, watch_array* _base) :
             it(_it)
             , base(_base)
         {}
@@ -351,9 +350,9 @@ struct watch_array
 
     struct const_iterator
     {
-        vector<Elem>::const_iterator it;
+        cms_vector<Elem>::const_iterator it;
         const watch_array* base;
-        explicit const_iterator(vector<Elem>::const_iterator _it, const watch_array* _base) :
+        explicit const_iterator(cms_vector<Elem>::const_iterator _it, const watch_array* _base) :
             it(_it)
             , base(_base)
         {}

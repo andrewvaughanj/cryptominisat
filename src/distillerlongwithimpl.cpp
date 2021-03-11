@@ -264,7 +264,7 @@ bool DistillerLongWithImpl::remove_or_shrink_clause(Clause& cl, ClOffset& offset
 }
 
 void DistillerLongWithImpl::randomise_order_of_clauses(
-    vector<ClOffset>& clauses
+    cms_vector<ClOffset>& clauses
 ) {
     if (clauses.empty())
         return;
@@ -309,7 +309,7 @@ uint64_t DistillerLongWithImpl::calc_time_available(
 }
 
 bool DistillerLongWithImpl::shorten_all_cl_with_watch(
-    vector<ClOffset>& clauses
+    cms_vector<ClOffset>& clauses
     , bool red
     , bool alsoStrengthen
 ) {

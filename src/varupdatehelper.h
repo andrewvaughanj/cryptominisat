@@ -29,11 +29,11 @@ THE SOFTWARE.
 
 namespace CMSat {
 
-uint32_t getUpdatedVar(uint32_t toUpdate, const vector< uint32_t >& mapper);
-Lit getUpdatedLit(Lit toUpdate, const vector< uint32_t >& mapper);
+uint32_t getUpdatedVar(uint32_t toUpdate, const cms_vector< uint32_t >& mapper);
+Lit getUpdatedLit(Lit toUpdate, const cms_vector< uint32_t >& mapper);
 
 template<typename T>
-void updateArray(T& toUpdate, const vector< uint32_t >& mapper)
+void updateArray(T& toUpdate, const cms_vector< uint32_t >& mapper)
 {
     T backup = toUpdate;
     for(size_t i = 0; i < toUpdate.size(); i++) {
@@ -42,7 +42,7 @@ void updateArray(T& toUpdate, const vector< uint32_t >& mapper)
 }
 
 template<typename T>
-void updateArrayRev(T& toUpdate, const vector< uint32_t >& mapper)
+void updateArrayRev(T& toUpdate, const cms_vector< uint32_t >& mapper)
 {
     assert(toUpdate.size() >= mapper.size());
     T backup = toUpdate;
@@ -52,7 +52,7 @@ void updateArrayRev(T& toUpdate, const vector< uint32_t >& mapper)
 }
 
 template<typename T>
-void updateArrayMapCopy(T& toUpdate, const vector< uint32_t >& mapper)
+void updateArrayMapCopy(T& toUpdate, const cms_vector< uint32_t >& mapper)
 {
     //assert(toUpdate.size() == mapper.size());
     T backup = toUpdate;
@@ -64,7 +64,7 @@ void updateArrayMapCopy(T& toUpdate, const vector< uint32_t >& mapper)
 }
 
 template<typename T>
-void updateLitsMap(T& toUpdate, const vector< uint32_t >& mapper)
+void updateLitsMap(T& toUpdate, const cms_vector< uint32_t >& mapper)
 {
     for(size_t i = 0; i < toUpdate.size(); i++) {
         if (toUpdate[i].var() < mapper.size()) {
@@ -74,7 +74,7 @@ void updateLitsMap(T& toUpdate, const vector< uint32_t >& mapper)
 }
 
 template<typename T>
-void updateVarsMap(T& toUpdate, const vector< uint32_t >& mapper)
+void updateVarsMap(T& toUpdate, const cms_vector< uint32_t >& mapper)
 {
     for(size_t i = 0; i < toUpdate.size(); i++) {
         if (toUpdate[i] < mapper.size()) {
@@ -83,17 +83,17 @@ void updateVarsMap(T& toUpdate, const vector< uint32_t >& mapper)
     }
 }
 
-inline Lit getUpdatedLit(Lit toUpdate, const vector< uint32_t >& mapper)
+inline Lit getUpdatedLit(Lit toUpdate, const cms_vector< uint32_t >& mapper)
 {
     return Lit(getUpdatedVar(toUpdate.var(), mapper), toUpdate.sign());
 }
 
-inline uint32_t getUpdatedVar(uint32_t toUpdate, const vector< uint32_t >& mapper)
+inline uint32_t getUpdatedVar(uint32_t toUpdate, const cms_vector< uint32_t >& mapper)
 {
     return mapper.at(toUpdate);
 }
 
-inline uint32_t getUpdatedVarMaxToMax(uint32_t toUpdate, const vector< uint32_t >& mapper)
+inline uint32_t getUpdatedVarMaxToMax(uint32_t toUpdate, const cms_vector< uint32_t >& mapper)
 {
     if (toUpdate == std::numeric_limits<uint32_t>::max()) {
         return std::numeric_limits<uint32_t>::max();
@@ -102,7 +102,7 @@ inline uint32_t getUpdatedVarMaxToMax(uint32_t toUpdate, const vector< uint32_t 
 }
 
 template<typename T, typename T2>
-inline void updateBySwap(T& toUpdate, T2& seen, const vector< uint32_t >& mapper)
+inline void updateBySwap(T& toUpdate, T2& seen, const cms_vector< uint32_t >& mapper)
 {
     for(size_t i = 0; i < toUpdate.size(); i++) {
         if (seen.at(i)) {

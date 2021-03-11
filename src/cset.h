@@ -29,7 +29,6 @@ THE SOFTWARE.
 #include "clause.h"
 
 namespace CMSat {
-using std::vector;
 
 /**
 @brief Used to quicky add, remove and iterate through a clause set
@@ -37,9 +36,9 @@ using std::vector;
 Used in OccSimplifier to put into a set all clauses that need to be treated
 */
 class CSet {
-    vector<uint32_t>       where;  ///<Map clause ID to position in 'which'.
-    vector<ClOffset>   which;  ///< List of clauses (for fast iteration). May contain 'Clause_NULL'.
-    vector<uint32_t>       free;   ///<List of positions holding 'Clause_NULL'.
+    cms_vector<uint32_t>       where;  ///<Map clause ID to position in 'which'.
+    cms_vector<ClOffset>   which;  ///< List of clauses (for fast iteration). May contain 'Clause_NULL'.
+    cms_vector<uint32_t>       free;   ///<List of positions holding 'Clause_NULL'.
 
     public:
         //ClauseSimp& operator [] (uint32_t index) { return which[index]; }
@@ -103,7 +102,7 @@ class CSet {
         class iterator
         {
             public:
-                explicit iterator(vector<ClOffset>::iterator _it) :
+                explicit iterator(cms_vector<ClOffset>::iterator _it) :
                 it(_it)
                 {}
 
@@ -121,11 +120,11 @@ class CSet {
                     return *it;
                 }
 
-                vector<ClOffset>::iterator& operator->() {
+                cms_vector<ClOffset>::iterator& operator->() {
                     return it;
                 }
             private:
-                vector<ClOffset>::iterator it;
+                cms_vector<ClOffset>::iterator it;
         };
 
         /**
@@ -136,7 +135,7 @@ class CSet {
         class const_iterator
         {
             public:
-                explicit const_iterator(vector<ClOffset>::const_iterator _it) :
+                explicit const_iterator(cms_vector<ClOffset>::const_iterator _it) :
                 it(_it)
                 {}
 
@@ -154,11 +153,11 @@ class CSet {
                     return *it;
                 }
 
-                vector<ClOffset>::const_iterator& operator->() {
+                cms_vector<ClOffset>::const_iterator& operator->() {
                     return it;
                 }
             private:
-                vector<ClOffset>::const_iterator it;
+                cms_vector<ClOffset>::const_iterator it;
         };
 
         ///@brief Get starting iterator

@@ -52,9 +52,9 @@ class CompleteDetachReatacher
         void detach_nonbins_nontris();
 
     private:
-        void attachClauses(vector<ClOffset>& cs);
+        void attachClauses(cms_vector<ClOffset>& cs);
         void cleanAndAttachClauses(
-            vector<ClOffset>& cs
+            cms_vector<ClOffset>& cs
             , bool removeStatsFrist
         );
         bool clean_clause(Clause* cl);

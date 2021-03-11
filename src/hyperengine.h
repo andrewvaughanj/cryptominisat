@@ -23,13 +23,12 @@ THE SOFTWARE.
 #include "cnf.h"
 #include "propby.h"
 #include "solvertypes.h"
-#include <vector>
+#include "cms_vector.h"
 #include <set>
 #include "propengine.h"
 #include "mystack.h"
 
 
-using std::vector;
 using std::set;
 
 namespace CMSat {
@@ -85,7 +84,7 @@ private:
         , PropBy& confl
     );
 
-    vector<Lit> currAncestors;
+    cms_vector<Lit> currAncestors;
 };
 
 }

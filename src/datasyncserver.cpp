@@ -23,7 +23,6 @@ THE SOFTWARE.
 #include "datasyncserver.h"
 #include "solvertypes.h"
 #include <cassert>
-using std::vector;
 
 //#define VERBOSE_DEBUG_MPI_SENDRCV
 
@@ -141,8 +140,8 @@ void DataSyncServer::addOneBinToOthers(const Lit lit1, const Lit lit2)
 {
     assert(lit1 < lit2);
 
-    vector<Lit>& thisBins = bins[(~lit1).toInt()];
-    for (vector<Lit>::const_iterator it = thisBins.begin(), end = thisBins.end(); it != end; it++) {
+    cms_vector<Lit>& thisBins = bins[(~lit1).toInt()];
+    for (cms_vector<Lit>::const_iterator it = thisBins.begin(), end = thisBins.end(); it != end; it++) {
         if (*it == lit2) return;
     }
 
@@ -179,7 +178,7 @@ void DataSyncServer::sendDataToAll()
     }
 
     uint32_t thisSentBinData = 0;
-    vector<uint32_t> data;
+    cms_vector<uint32_t> data;
     data.push_back((uint32_t)nVars);
     for (uint32_t var = 0; var < nVars; var++) {
         data.push_back(toInt(value[var]));
@@ -189,8 +188,8 @@ void DataSyncServer::sendDataToAll()
 
     //Binaries
     uint32_t at = 0;
-    for(vector<vector<Lit> >::const_iterator it = bins.begin(), end = bins.end(); it != end; it++, at++) {
-        const vector<Lit>& binSet = *it;
+    for(cms_vector<cms_vector<Lit> >::const_iterator it = bins.begin(), end = bins.end(); it != end; it++, at++) {
+        const cms_vector<Lit>& binSet = *it;
         assert(binSet.size() >= syncMPIFinish[at]);
         uint32_t sizeToSend = binSet.size() - syncMPIFinish[at];
         data.push_back(sizeToSend);

@@ -93,9 +93,9 @@ SQLiteStats::SQLiteStats(std::string _filename) :
 {
 }
 
-vector<string> SQLiteStats::get_columns(const char* tablename)
+cms_vector<string> SQLiteStats::get_columns(const char* tablename)
 {
-    vector<string> ret;
+    cms_vector<string> ret;
 
     std::stringstream q;
     q << "pragma table_info(" << tablename << ");";
@@ -372,7 +372,7 @@ void SQLiteStats::run_sqlite_step(sqlite3_stmt* stmt, const char* name)
 
 void SQLiteStats::init(const char* name, sqlite3_stmt** stmt)
 {
-    vector<string> cols = get_columns(name);
+    cms_vector<string> cols = get_columns(name);
     const size_t numElems = cols.size();
 
     std::stringstream ss;

@@ -26,7 +26,7 @@ THE SOFTWARE.
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include <vector>
+#include "cms_vector.h"
 #include <cassert>
 
 using namespace CCNR;
@@ -71,7 +71,7 @@ bool ls_solver::make_space()
 
 void ls_solver::build_neighborhood()
 {
-    vector<bool> neighbor_flag(_num_vars+1);
+    cms_vector<bool> neighbor_flag(_num_vars+1);
     for (uint32_t j = 0; j < neighbor_flag.size(); ++j) {
         neighbor_flag[j] = 0;
     }
@@ -95,7 +95,7 @@ void ls_solver::build_neighborhood()
 /****************local search**********************************/
 //bool  *return value modified
 bool ls_solver::local_search(
-    const vector<bool> *init_solution
+    const cms_vector<bool> *init_solution
     , long long int _mems_limit
 ) {
     bool result = false;
@@ -163,7 +163,7 @@ void ls_solver::clear_prev_data()
         item = 0;
 }
 
-void ls_solver::initialize(const vector<bool> *init_solution)
+void ls_solver::initialize(const cms_vector<bool> *init_solution)
 {
     clear_prev_data();
     if (!init_solution) {

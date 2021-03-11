@@ -272,7 +272,7 @@ void ClauseAllocator::consolidate(
 
     assert(sizeof(BASE_DATA_TYPE) % sizeof(Lit) == 0);
 
-    vector<bool> visited(solver->watches.size(), 0);
+    cms_vector<bool> visited(solver->watches.size(), 0);
     for(auto& ws: solver->watches) {
         move_one_watchlist(ws, newDataStart, new_ptr);
     }
@@ -339,7 +339,7 @@ void ClauseAllocator::consolidate(
 }
 
 void ClauseAllocator::update_offsets(
-    vector<ClOffset>& offsets,
+    cms_vector<ClOffset>& offsets,
     ClOffset* newDataStart,
     ClOffset*& new_ptr
 ) {

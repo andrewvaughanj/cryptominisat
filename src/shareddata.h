@@ -25,9 +25,8 @@ THE SOFTWARE.
 
 #include "cryptominisat5/solvertypesmini.h"
 
-#include <vector>
+#include "cms_vector.h"
 #include <mutex>
-using std::vector;
 using std::mutex;
 
 namespace CMSat {
@@ -41,7 +40,7 @@ class SharedData
 
         struct Spec {
             Spec() :
-                data(new vector<Lit>)
+                data(new cms_vector<Lit>)
             {}
 
             Spec(const Spec&) = delete;
@@ -59,7 +58,7 @@ class SharedData
             ~Spec() {
                 clear();
             }
-            vector<Lit>* data = NULL;
+            cms_vector<Lit>* data = NULL;
 
             void clear()
             {
@@ -67,8 +66,8 @@ class SharedData
                 data = NULL;
             }
         };
-        vector<lbool> value;
-        vector<Spec> bins;
+        cms_vector<lbool> value;
+        cms_vector<Spec> bins;
         std::mutex unit_mutex;
         std::mutex bin_mutex;
 
@@ -81,7 +80,7 @@ class SharedData
             for(size_t i = 0; i < bins.size(); i++) {
                 if (bins[i].data) {
                     mem += bins[i].data->capacity()*sizeof(Lit);
-                    mem += sizeof(vector<Lit>);
+                    mem += sizeof(cms_vector<Lit>);
                 }
             }
             return mem;

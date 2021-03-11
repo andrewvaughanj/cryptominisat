@@ -23,8 +23,7 @@ THE SOFTWARE.
 #ifndef __MYSTACK_H__
 #define __MYSTACK_H__
 
-#include <vector>
-using std::vector;
+#include "cms_vector.h"
 
 namespace CMSat {
 
@@ -69,7 +68,7 @@ public:
     }
 
 private:
-    vector<T> inter;
+    cms_vector<T> inter;
 };
 
 }

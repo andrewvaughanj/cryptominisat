@@ -138,8 +138,8 @@ void Searcher::save_on_var_memory()
 }
 
 void Searcher::updateVars(
-    const vector<uint32_t>& /*outerToInter*/
-    , const vector<uint32_t>& interToOuter
+    const cms_vector<uint32_t>& /*outerToInter*/
+    , const cms_vector<uint32_t>& interToOuter
 ) {
 
     updateArray(var_act_vsids, interToOuter);
@@ -252,7 +252,7 @@ void Searcher::normalClMinim()
 
             #ifdef USE_GAUSS
             case xor_t: {
-                vector<Lit>* xor_reason = gmatrices[reason.get_matrix_num()]->
+                cms_vector<Lit>* xor_reason = gmatrices[reason.get_matrix_num()]->
                 get_reason(reason.get_row_num());
                 lits = xor_reason->data();
                 size = xor_reason->size()-1;
@@ -451,7 +451,7 @@ void Searcher::add_literals_from_confl_to_learnt(
 
         #ifdef USE_GAUSS
         case xor_t: {
-            vector<Lit>* xor_reason = gmatrices[confl.get_matrix_num()]->
+            cms_vector<Lit>* xor_reason = gmatrices[confl.get_matrix_num()]->
                 get_reason(confl.get_row_num());
             lits = xor_reason->data();
             size = xor_reason->size();
@@ -606,7 +606,7 @@ void Searcher::create_learnt_clause(PropBy confl)
         }
         #ifdef USE_GAUSS
         case xor_t: {
-            vector<Lit>* cl = gmatrices[confl.get_matrix_num()]->
+            cms_vector<Lit>* cl = gmatrices[confl.get_matrix_num()]->
                 get_reason(confl.get_row_num());
             lit0 = (*cl)[0];
             break;
@@ -656,7 +656,7 @@ void Searcher::create_learnt_clause(PropBy confl)
 
 void Searcher::simple_create_learnt_clause(
     PropBy confl,
-    vector<Lit>& out_learnt,
+    cms_vector<Lit>& out_learnt,
     bool True_confl
 ) {
     int until = -1;
@@ -940,7 +940,7 @@ bool Searcher::litRedundant(const Lit p, uint32_t abstract_levels)
 
             #ifdef USE_GAUSS
             case xor_t: {
-                vector<Lit>* xcl = gmatrices[reason.get_matrix_num()]->
+                cms_vector<Lit>* xcl = gmatrices[reason.get_matrix_num()]->
                     get_reason(reason.get_row_num());
                 lits = xcl->data();
                 size = xcl->size()-1;
@@ -1013,7 +1013,7 @@ template void Searcher::analyze_conflict<false>(const PropBy confl
     , uint32_t& glue_before_minim
 );
 
-bool Searcher::subset(const vector<Lit>& A, const Clause& B)
+bool Searcher::subset(const cms_vector<Lit>& A, const Clause& B)
 {
     //Set seen
     for (uint32_t i = 0; i != B.size(); i++)
@@ -1034,7 +1034,7 @@ bool Searcher::subset(const vector<Lit>& A, const Clause& B)
     return ret;
 }
 
-void Searcher::analyze_final_confl_with_assumptions(const Lit p, vector<Lit>& out_conflict)
+void Searcher::analyze_final_confl_with_assumptions(const Lit p, cms_vector<Lit>& out_conflict)
 {
     out_conflict.clear();
     out_conflict.push_back(p);
@@ -1082,7 +1082,7 @@ void Searcher::analyze_final_confl_with_assumptions(const Lit p, vector<Lit>& ou
 
                     #ifdef USE_GAUSS
                     case PropByType::xor_t: {
-                        vector<Lit>* cl = gmatrices[reason.get_matrix_num()]->
+                        cms_vector<Lit>* cl = gmatrices[reason.get_matrix_num()]->
                             get_reason(reason.get_row_num());
                         assert(value((*cl)[0]) == l_True);
                         for(const Lit lit: *cl) {
@@ -1109,13 +1109,13 @@ void Searcher::analyze_final_confl_with_assumptions(const Lit p, vector<Lit>& ou
     out_conflict = learnt_clause;
 }
 
-void Searcher::update_assump_conflict_to_orig_outside(vector<Lit>& out_conflict)
+void Searcher::update_assump_conflict_to_orig_outside(cms_vector<Lit>& out_conflict)
 {
     if (assumptions.empty()) {
         return;
     }
 
-    vector<AssumptionPair> inter_assumptions;
+    cms_vector<AssumptionPair> inter_assumptions;
     for(const auto& ass: assumptions) {
         inter_assumptions.push_back(
             AssumptionPair(map_outer_to_inter(ass.lit_outer), ass.lit_orig_outside));
@@ -2155,7 +2155,7 @@ void Searcher::rebuildOrderHeap()
         cout << "c [branch] rebuilding order heap for all branchings. Current branching: " <<
         branch_type_to_string(branch_strategy) << endl;
     }
-    vector<uint32_t> vs;
+    cms_vector<uint32_t> vs;
     vs.reserve(nVars());
     for (uint32_t v = 0; v < nVars(); v++) {
         if (varData[v].removed != Removed::none
@@ -2198,7 +2198,7 @@ void Searcher::rebuildOrderHeapVMTF()
     //TODO fix
     return;
 
-    vector<uint32_t> vs;
+    cms_vector<uint32_t> vs;
     vs.reserve(nVars());
     uint32_t v = pick_var_vmtf();
     while(v != var_Undef) {
@@ -2962,7 +2962,7 @@ uint32_t Searcher::pick_var_vsids_maple()
     return v;
 }
 
-void Searcher::binary_based_morem_minim(vector<Lit>& cl)
+void Searcher::binary_based_morem_minim(cms_vector<Lit>& cl)
 {
     int64_t limit  = more_red_minim_limit_binary_actual;
     const size_t first_n_lits_of_cl =
@@ -2992,7 +2992,7 @@ void Searcher::binary_based_morem_minim(vector<Lit>& cl)
     }
 }
 
-void Searcher::minimise_redundant_more_more(vector<Lit>& cl)
+void Searcher::minimise_redundant_more_more(cms_vector<Lit>& cl)
 {
     stats.furtherShrinkAttempt++;
     for (const Lit lit: cl) {
@@ -3004,14 +3004,14 @@ void Searcher::minimise_redundant_more_more(vector<Lit>& cl)
     //Finally, remove the literals that have seen[literal] = 0
     //Here, we can count do stats, etc.
     bool changedClause  = false;
-    vector<Lit>::iterator i = cl.begin();
-    vector<Lit>::iterator j= i;
+    cms_vector<Lit>::iterator i = cl.begin();
+    cms_vector<Lit>::iterator j= i;
 
     //never remove the 0th literal -- TODO this is a bad thing
     //we should be able to remove this, but I can't figure out how to
     //reorder the clause then
     seen[cl[0].toInt()] = 1;
-    for (vector<Lit>::iterator end = cl.end(); i != end; i++) {
+    for (cms_vector<Lit>::iterator end = cl.end(); i != end; i++) {
         if (seen[i->toInt()]) {
             *j++ = *i;
         } else {
@@ -3373,7 +3373,7 @@ void Searcher::consolidate_watches(const bool full)
 }
 
 void Searcher::write_long_cls(
-    const vector<ClOffset>& clauses
+    const cms_vector<ClOffset>& clauses
     , SimpleOutFile& f
     , const bool red
 ) const {
@@ -3400,7 +3400,7 @@ void Searcher::read_long_cls(
 ) {
     uint64_t num_cls = f.get_uint64_t();
 
-    vector<Lit> tmp_cl;
+    cms_vector<Lit> tmp_cl;
     for(size_t i = 0; i < num_cls; i++)
     {
         tmp_cl.clear();
@@ -3802,7 +3802,7 @@ ConflictData Searcher::find_conflict_level(PropBy& pb)
 
             #ifdef USE_GAUSS
             case PropByType::xor_t: {
-                vector<Lit>* cl = gmatrices[pb.get_matrix_num()]->
+                cms_vector<Lit>* cl = gmatrices[pb.get_matrix_num()]->
                     get_reason(pb.get_row_num());
                     clause = cl->data();
                     size = cl->size();

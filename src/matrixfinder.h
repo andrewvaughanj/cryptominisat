@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef MATRIXFINDER_H
 #define MATRIXFINDER_H
 
-#include <vector>
+#include "cms_vector.h"
 #include <map>
 #include <set>
 #include "xor.h"
@@ -34,7 +34,6 @@ namespace CMSat {
 class Solver;
 
 using std::map;
-using std::vector;
 using std::pair;
 using std::set;
 
@@ -46,9 +45,9 @@ class MatrixFinder {
         //NOTE "simplify_xors" should always be true except during testing
         bool findMatrixes(bool& can_detach, bool simplify_xors = true);
 
-        vector<Xor> unused_xors;
+        cms_vector<Xor> unused_xors;
         set<uint32_t> clash_vars_unused;
-        vector<Xor> xors;
+        cms_vector<Xor> xors;
 
     private:
         uint32_t setMatrixes();
@@ -85,12 +84,12 @@ class MatrixFinder {
         inline bool firstPartOfSecond(const Xor& c1, const Xor& c2) const;
         inline bool belong_same_matrix(const Xor& x);
 
-        map<uint32_t, vector<uint32_t> > reverseTable; //matrix -> vars
-        vector<uint32_t> table; //var -> matrix
+        map<uint32_t, cms_vector<uint32_t> > reverseTable; //matrix -> vars
+        cms_vector<uint32_t> table; //var -> matrix
         uint32_t matrix_no;
 
         Solver* solver;
-        vector<uint16_t>& seen;
+        cms_vector<uint16_t>& seen;
 };
 
 }

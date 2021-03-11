@@ -24,10 +24,9 @@ THE SOFTWARE.
 #define __DRAT_H__
 
 #include "clause.h"
-#include <vector>
+#include "cms_vector.h"
 #include <iostream>
 
-using std::vector;
 //#define DEBUG_DRAT
 
 namespace CMSat {
@@ -79,7 +78,7 @@ struct Drat
         return *this;
     }
 
-    virtual Drat& operator<<(const vector<Lit>&)
+    virtual Drat& operator<<(const cms_vector<Lit>&)
     {
         return *this;
     }
@@ -103,7 +102,7 @@ struct Drat
 template<bool add_ID>
 struct DratFile: public Drat
 {
-    DratFile(vector<uint32_t>& _interToOuterMain) :
+    DratFile(cms_vector<uint32_t>& _interToOuterMain) :
         interToOuterMain(_interToOuterMain)
     {
         drup_buf = new unsigned char[2 * 1024 * 1024];
@@ -286,7 +285,7 @@ struct DratFile: public Drat
         return *this;
     }
 
-    Drat& operator<<(const vector<Lit>& cl) override
+    Drat& operator<<(const cms_vector<Lit>& cl) override
     {
         if (must_delete_next) {
 #ifdef DEBUG_DRAT
@@ -389,7 +388,7 @@ struct DratFile: public Drat
     }
 
     std::ostream* drup_file = NULL;
-    vector<uint32_t>& interToOuterMain;
+    cms_vector<uint32_t>& interToOuterMain;
     #ifdef STATS_NEEDED
     int64_t ID = 0;
     int64_t sumConflicts = std::numeric_limits<int64_t>::max();

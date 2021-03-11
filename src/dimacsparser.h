@@ -30,7 +30,6 @@ THE SOFTWARE.
 #include <cmath>
 
 using namespace CMSat;
-using std::vector;
 
 template <class C, class S>
 class DimacsParser
@@ -43,8 +42,8 @@ class DimacsParser
             const bool strict_header,
             uint32_t offset_vars = 0);
         uint64_t max_var = std::numeric_limits<uint64_t>::max();
-        vector<uint32_t> sampling_vars;
-        vector<double> weights;
+        cms_vector<uint32_t> sampling_vars;
+        cms_vector<double> weights;
         const std::string dimacs_spec = "http://www.satcompetition.org/2009/format-benchmarks2009.html";
         const std::string please_read_dimacs = "\nPlease read DIMACS specification at http://www.satcompetition.org/2009/format-benchmarks2009.html";
 
@@ -88,8 +87,8 @@ class DimacsParser
         uint32_t offset_vars = 0;
 
         //Reduce temp overhead
-        vector<Lit> lits;
-        vector<uint32_t> vars;
+        cms_vector<Lit> lits;
+        cms_vector<uint32_t> vars;
 
         size_t norm_clauses_added = 0;
         size_t xor_clauses_added = 0;
@@ -98,12 +97,11 @@ class DimacsParser
 #include <sstream>
 #include <iostream>
 #include <iomanip>
-#include <vector>
+#include "cms_vector.h"
 #include <fstream>
 #include <complex>
 #include <cassert>
 
-using std::vector;
 using std::cout;
 using std::endl;
 
@@ -321,7 +319,7 @@ std::string DimacsParser<C, S>::get_debuglib_fname() const
 template<class C, class S>
 bool DimacsParser<C, S>::parse_solve_simp_comment(C& in, const bool solve)
 {
-    vector<Lit> assumps;
+    cms_vector<Lit> assumps;
     in.skipWhitespace();
     while(*in != ')') {
         int lit;

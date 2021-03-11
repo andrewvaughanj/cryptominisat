@@ -26,12 +26,11 @@ THE SOFTWARE.
 #include "solvertypes.h"
 #include "cloffset.h"
 #include <map>
-#include <vector>
+#include "cms_vector.h"
 
 namespace CMSat {
 
 using std::map;
-using std::vector;
 using std::pair;
 
 class SATSolver;
@@ -54,16 +53,16 @@ class CompHandler
         ~CompHandler();
 
         struct RemovedClauses {
-            vector<Lit> lits;
-            vector<uint32_t> sizes;
+            cms_vector<Lit> lits;
+            cms_vector<uint32_t> sizes;
         };
 
         bool handle();
-        const vector<lbool>& getSavedState();
+        const cms_vector<lbool>& getSavedState();
         void new_var(const uint32_t orig_outer);
         void new_vars(const size_t n);
         void save_on_var_memory();
-        void addSavedState(vector<lbool>& solution);
+        void addSavedState(cms_vector<lbool>& solution);
         void readdRemovedClauses();
         const RemovedClauses& getRemovedClauses() const;
         uint32_t dump_removed_clauses(std::ostream* outfile) const;
@@ -80,33 +79,33 @@ class CompHandler
                 return left.second < right.second;
             }
         };
-        bool assumpsInsideComponent(const vector<uint32_t>& vars);
+        bool assumpsInsideComponent(const cms_vector<uint32_t>& vars);
         void move_decision_level_zero_vars_here(
             const SATSolver* newSolver
         );
         void save_solution_to_savedstate(
             const SATSolver* newSolver
-            , const vector<uint32_t>& vars
+            , const cms_vector<uint32_t>& vars
             , const uint32_t comp
         );
         void check_solution_is_unassigned_in_main_solver(
             const SATSolver* newSolver
-            , const vector<uint32_t>& vars
+            , const cms_vector<uint32_t>& vars
         );
         void check_local_vardata_sanity();
         bool try_to_solve_component(
             const uint32_t comp_at
             , const uint32_t comp
-            , const vector<uint32_t>& vars
+            , const cms_vector<uint32_t>& vars
             , const size_t num_comps
         );
         bool solve_component(
             const uint32_t comp_at
             , const uint32_t comp
-            , const vector<uint32_t>& vars_orig
+            , const cms_vector<uint32_t>& vars_orig
             , const size_t num_comps
         );
-        vector<pair<uint32_t, uint32_t> > get_component_sizes() const;
+        cms_vector<pair<uint32_t, uint32_t> > get_component_sizes() const;
 
         SolverConf configureNewSolver(
             const size_t numVars
@@ -114,7 +113,7 @@ class CompHandler
 
         void moveVariablesBetweenSolvers(
             SATSolver* newSolver
-            , const vector<uint32_t>& vars
+            , const cms_vector<uint32_t>& vars
             , const uint32_t comp
         );
 
@@ -122,10 +121,10 @@ class CompHandler
         void moveClausesImplicit(
             SATSolver* newSolver
             , const uint32_t comp
-            , const vector<uint32_t>& vars
+            , const cms_vector<uint32_t>& vars
         );
         void moveClausesLong(
-            vector<ClOffset>& cs
+            cms_vector<ClOffset>& cs
             , SATSolver* newSolver
             , const uint32_t comp
         );
@@ -141,13 +140,13 @@ class CompHandler
         CompFinder* compFinder;
 
         ///The solutions that have been found by the comps
-        vector<lbool> savedState;
+        cms_vector<lbool> savedState;
 
         //Re-numbering
-        void createRenumbering(const vector<uint32_t>& vars);
-        vector<uint32_t> useless; //temporary
-        vector<uint32_t> smallsolver_to_bigsolver;
-        vector<uint32_t> bigsolver_to_smallsolver;
+        void createRenumbering(const cms_vector<uint32_t>& vars);
+        cms_vector<uint32_t> useless; //temporary
+        cms_vector<uint32_t> smallsolver_to_bigsolver;
+        cms_vector<uint32_t> bigsolver_to_smallsolver;
 
         Lit upd_bigsolver_to_smallsolver(const Lit lit) const
         {
@@ -167,18 +166,18 @@ class CompHandler
         size_t components_solved = 0;
 
         //Clauses that have been moved to other comps
-        //vector<ClOffset> clausesRemoved;
-        //vector<pair<Lit, Lit> > binClausesRemoved;
+        //cms_vector<ClOffset> clausesRemoved;
+        //cms_vector<pair<Lit, Lit> > binClausesRemoved;
 
         uint32_t numRemovedHalfIrred = 0;
         uint32_t numRemovedHalfRed = 0;
-        vector<Lit> tmp_lits;
+        cms_vector<Lit> tmp_lits;
 };
 
 /**
 @brief Returns the saved state of a variable
 */
-inline const vector<lbool>& CompHandler::getSavedState()
+inline const cms_vector<lbool>& CompHandler::getSavedState()
 {
     return savedState;
 }

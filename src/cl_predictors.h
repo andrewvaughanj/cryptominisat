@@ -30,11 +30,10 @@ THE SOFTWARE.
 #endif
 
 
-#include <vector>
+#include "cms_vector.h"
 #include <string>
 #include <xgboost/c_api.h>
 
-using std::vector;
 
 namespace CMSat {
 
@@ -89,7 +88,7 @@ private:
         const uint32_t act_ranking_top_10,
         const uint32_t cols,
         float* at);
-    vector<BoosterHandle> handles;
+    cms_vector<BoosterHandle> handles;
     float train[PRED_COLS];
     DMatrixHandle dmat;
     Solver* solver;

@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef _CARDFINDER_H_
 #define _CARDFINDER_H_
 
-#include <vector>
+#include "cms_vector.h"
 #include <set>
 #include <iostream>
 #include <algorithm>
@@ -33,7 +33,6 @@ THE SOFTWARE.
 #include "cset.h"
 #include "watcharray.h"
 
-using std::vector;
 using std::set;
 
 namespace CMSat {
@@ -46,30 +45,30 @@ class CardFinder
 public:
     CardFinder(Solver* solver);
     void find_cards();
-    const vector<vector<Lit>>& get_cards() const;
+    const cms_vector<cms_vector<Lit>>& get_cards() const;
 
 private:
-    void get_vars_with_clash(const vector<Lit>& lits, vector<uint32_t>& vars) const;
+    void get_vars_with_clash(const cms_vector<Lit>& lits, cms_vector<uint32_t>& vars) const;
     void find_pairwise_atmost1();
-    void deal_with_clash(vector<uint32_t>& vars);
+    void deal_with_clash(cms_vector<uint32_t>& vars);
     bool find_connector(Lit lit1, Lit lit2) const;
-    std::string print_card(const vector<Lit>& lits) const;
-    void print_cards(const vector<vector<Lit>>& card_constraints) const;
+    std::string print_card(const cms_vector<Lit>& lits) const;
+    void print_cards(const cms_vector<cms_vector<Lit>>& card_constraints) const;
     void find_two_product_atmost1();
     void clean_empty_cards();
 
     //from solver
     Solver* solver;
-    vector<uint16_t>& seen;
-    vector<uint8_t>& seen2;
-    vector<Lit>& toClear;
+    cms_vector<uint16_t>& seen;
+    cms_vector<uint8_t>& seen2;
+    cms_vector<Lit>& toClear;
 
     //internal data
-    vector<vector<Lit>> cards;
+    cms_vector<cms_vector<Lit>> cards;
     uint64_t total_sizes = 0;
 };
 
-inline const vector<vector<Lit>>& CardFinder::get_cards() const
+inline const cms_vector<cms_vector<Lit>>& CardFinder::get_cards() const
 {
     return cards;
 }

@@ -82,7 +82,7 @@ void SolutionExtender::extend()
     solver->varReplacer->extend_model_set_undef();
 }
 
-inline bool SolutionExtender::satisfied(const vector< Lit >& lits) const
+inline bool SolutionExtender::satisfied(const cms_vector< Lit >& lits) const
 {
     for(const Lit lit: lits) {
         if (solver->model_value(lit) == l_True)
@@ -119,7 +119,7 @@ void SolutionExtender::dummyBlocked(const uint32_t blockedOn)
     }
 }
 
-bool SolutionExtender::addClause(const vector<Lit>& lits, const uint32_t blockedOn)
+bool SolutionExtender::addClause(const cms_vector<Lit>& lits, const uint32_t blockedOn)
 {
     #ifdef VERBOSE_DEBUG_SOLUTIONEXTENDER
     cout

@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef _XORFINDER_H_
 #define _XORFINDER_H_
 
-#include <vector>
+#include "cms_vector.h"
 #include <set>
 #include <iostream>
 #include <algorithm>
@@ -34,7 +34,6 @@ THE SOFTWARE.
 #include "cset.h"
 #include "watcharray.h"
 
-using std::vector;
 using std::set;
 
 namespace CMSat {
@@ -52,10 +51,10 @@ class PossibleXor
         }
 
         void setup(
-            const vector<Lit>& cl
+            const cms_vector<Lit>& cl
             , const ClOffset offset
             , cl_abst_type _abst
-            , vector<uint32_t>& seen
+            , cms_vector<uint32_t>& seen
         ) {
             abst = _abst;
             size = cl.size();
@@ -81,7 +80,7 @@ class PossibleXor
             }
         }
 
-        void clear_seen(vector<uint32_t>& seen)
+        void clear_seen(cms_vector<uint32_t>& seen)
         {
             for (uint32_t i = 0; i < size; i++) {
                 seen[origCl[i].var()] = 0;
@@ -96,20 +95,20 @@ class PossibleXor
 
         //Add
         template<class T>
-        void add(const T& cl, const ClOffset offset, vector<uint32_t>& varsMissing);
+        void add(const T& cl, const ClOffset offset, cms_vector<uint32_t>& varsMissing);
 
-        const vector<ClOffset>& get_offsets() const
+        const cms_vector<ClOffset>& get_offsets() const
         {
             return offsets;
         }
 
-        const vector<char>& get_fully_used() const
+        const cms_vector<char>& get_fully_used() const
         {
             return fully_used;
         }
 
     private:
-        void setup_seen_rhs_foundcomb(vector<uint32_t>& seen)
+        void setup_seen_rhs_foundcomb(cms_vector<uint32_t>& seen)
         {
             //Calculate parameters of base clause.
             //Also set 'seen' for easy check in 'findXorMatch()'
@@ -139,13 +138,13 @@ class PossibleXor
         // 1 0 0
         // 0 1 0
         // 0 0 1
-        vector<char> foundComb;
+        cms_vector<char> foundComb;
         Lit origCl[MAX_XOR_RECOVER_SIZE];
         cl_abst_type abst;
         uint32_t size;
         bool rhs;
-        vector<ClOffset> offsets;
-        vector<char> fully_used;
+        cms_vector<ClOffset> offsets;
+        cms_vector<char> fully_used;
 };
 
 class XorFinder
@@ -180,13 +179,13 @@ public:
     const Stats& get_stats() const;
     size_t mem_used() const;
     void grab_mem();
-    vector<Xor> remove_xors_without_connecting_vars(const vector<Xor>& this_xors);
-    bool xor_together_xors(vector<Xor>& xors);
-    bool add_new_truths_from_xors(vector<Xor>& xors, vector<Lit>* out_changed_occur = NULL);
-    void clean_equivalent_xors(vector<Xor>& txors);
+    cms_vector<Xor> remove_xors_without_connecting_vars(const cms_vector<Xor>& this_xors);
+    bool xor_together_xors(cms_vector<Xor>& xors);
+    bool add_new_truths_from_xors(cms_vector<Xor>& xors, cms_vector<Lit>* out_changed_occur = NULL);
+    void clean_equivalent_xors(cms_vector<Xor>& txors);
 
-    vector<Xor>& xors;
-    vector<Xor>& unused_xors;
+    cms_vector<Xor>& xors;
+    cms_vector<Xor>& unused_xors;
 
 private:
     PossibleXor poss_xor;
@@ -194,17 +193,17 @@ private:
     void find_xors_based_on_long_clauses();
     void print_found_xors();
     bool xor_has_interesting_var(const Xor& x);
-    void clean_xors_from_empty(vector<Xor>& thisxors);
+    void clean_xors_from_empty(cms_vector<Xor>& thisxors);
 
     ///xor two -- don't re-allocate memory all the time
     ///use tmp_vars_xor_two instead
     uint32_t xor_two(Xor const* x1, Xor const* x2, uint32_t& clash_var);
-    vector<uint32_t> tmp_vars_xor_two;
+    cms_vector<uint32_t> tmp_vars_xor_two;
 
     int64_t xor_find_time_limit;
 
     //Find XORs
-    void findXor(vector<Lit>& lits, const ClOffset offset, cl_abst_type abst);
+    void findXor(cms_vector<Lit>& lits, const ClOffset offset, cl_abst_type abst);
 
     ///Normal finding of matching clause for XOR
     void findXorMatch(watch_subarray_const occ, const Lit wlit);
@@ -217,16 +216,16 @@ private:
     Stats globalStats;
 
     //Temporary
-    vector<Lit> tmpClause;
-    vector<uint32_t> varsMissing;
-    vector<Lit> binvec;
+    cms_vector<Lit> tmpClause;
+    cms_vector<uint32_t> varsMissing;
+    cms_vector<Lit> binvec;
 
     //Other temporaries
-    vector<uint32_t> occcnt;
-    vector<Lit>& toClear;
-    vector<uint16_t>& seen;
-    vector<uint8_t>& seen2;
-    vector<uint32_t> interesting;
+    cms_vector<uint32_t> occcnt;
+    cms_vector<Lit>& toClear;
+    cms_vector<uint16_t>& seen;
+    cms_vector<uint8_t>& seen2;
+    cms_vector<uint32_t> interesting;
 };
 
 
@@ -248,7 +247,7 @@ inline bool PossibleXor::getRHS() const
 template<class T> void PossibleXor::add(
     const T& cl
     , const ClOffset offset
-    , vector<uint32_t>& varsMissing
+    , cms_vector<uint32_t>& varsMissing
 ) {
     #ifdef VERBOSE_DEBUG_XOR_FINDER
     cout << "Adding to XOR: " << cl << endl;

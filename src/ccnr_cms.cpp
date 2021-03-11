@@ -73,7 +73,7 @@ lbool CMS_ccnr::main(const uint32_t num_sls_called)
         return l_Undef;
     }
 
-    vector<bool> phases(solver->nVars()+1);
+    cms_vector<bool> phases(solver->nVars()+1);
     for(uint32_t i = 0; i < solver->nVars(); i++) {
         phases[i+1] = solver->varData[i].polarity;
     }
@@ -157,7 +157,7 @@ bool CMS_ccnr::init_problem()
     ls_s->_num_clauses = solver->longIrredCls.size() + solver->binTri.irredBins;
     ls_s->make_space();
 
-    vector<Lit> this_clause;
+    cms_vector<Lit> this_clause;
     for(size_t i2 = 0; i2 < solver->nVars()*2; i2++) {
         Lit lit = Lit::toLit(i2);
         for(const Watched& w: solver->watches[lit]) {
@@ -223,7 +223,7 @@ struct VarValSorter
     }
 };
 
-vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_cls()
+cms_vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_cls()
 {
     if (solver->conf.verbosity) {
         cout << "c [ccnr] bumping based on clause weights" << endl;
@@ -236,7 +236,7 @@ vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_cls()
     }
     #endif
 
-    vector<pair<uint32_t, double>> tobump_cl_var;
+    cms_vector<pair<uint32_t, double>> tobump_cl_var;
     std::sort(ls_s->_clauses.begin(), ls_s->_clauses.end(), ClWeightSorter());
     uint32_t vars_bumped = 0;
     uint32_t individual_vars_bumped = 0;
@@ -271,15 +271,15 @@ vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_cls()
     return tobump_cl_var;
 }
 
-vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_var_scores()
+cms_vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_var_scores()
 {
-    vector<VarAndVal> vs;
+    cms_vector<VarAndVal> vs;
     for(uint32_t i = 1; i < ls_s->_vars.size(); i++) {
         vs.push_back(VarAndVal(i-1, ls_s->_vars[i].score));
     }
     std::sort(vs.begin(), vs.end(), VarValSorter());
 
-    vector<pair<uint32_t, double>> tobump;
+    cms_vector<pair<uint32_t, double>> tobump;
     for(uint32_t i = 0; i < solver->conf.sls_how_many_to_bump; i++) {
 //         cout << "var: " << vs[i].var + 1 << " score: " <<  vs[i].val << endl;
         tobump.push_back(std::make_pair(vs[i].var, 3.0));
@@ -287,13 +287,13 @@ vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_var_scores()
     return tobump;
 }
 
-vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_conflict_ct()
+cms_vector<pair<uint32_t, double>> CMS_ccnr::get_bump_based_on_conflict_ct()
 {
     if (solver->conf.verbosity) {
         cout << "c [ccnr] bumping based on var unsat frequency: conflict_ct" << endl;
     }
 
-    vector<pair<uint32_t, double>> tobump;
+    cms_vector<pair<uint32_t, double>> tobump;
     int mymax = 0;
     for(uint32_t i = 1; i < ls_s->_conflict_ct.size(); i++) {
         mymax = std::max(mymax, ls_s->_conflict_ct[i]);
@@ -332,7 +332,7 @@ lbool CMS_ccnr::deal_with_solution(int res, const uint32_t num_sls_called)
     }
 
     //Clause score sorting
-    vector<pair<uint32_t, double>> tobump;
+    cms_vector<pair<uint32_t, double>> tobump;
     switch (solver->conf.sls_bump_type) {
         case 1:
             tobump = get_bump_based_on_cls();

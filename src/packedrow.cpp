@@ -52,9 +52,9 @@ inline int scan_fwd_64b(uint64_t value)
 
 ///returns popcnt
 uint32_t PackedRow::find_watchVar(
-    vector<Lit>& tmp_clause,
-    const vector<uint32_t>& col_to_var,
-    vector<char> &var_has_resp_row,
+    cms_vector<Lit>& tmp_clause,
+    const cms_vector<uint32_t>& col_to_var,
+    cms_vector<char> &var_has_resp_row,
     uint32_t& non_resp_var
 ) {
     uint32_t popcnt = 0;
@@ -83,9 +83,9 @@ uint32_t PackedRow::find_watchVar(
 }
 
 void PackedRow::get_reason(
-    vector<Lit>& tmp_clause,
-    const vector<lbool>& assigns,
-    const vector<uint32_t>& col_to_var,
+    cms_vector<Lit>& tmp_clause,
+    const cms_vector<lbool>& assigns,
+    const cms_vector<uint32_t>& col_to_var,
     PackedRow& cols_vals,
     PackedRow& tmp_col2,
     Lit prop
@@ -127,9 +127,9 @@ void PackedRow::get_reason(
 }
 
 gret PackedRow::propGause(
-    const vector<lbool>& assigns,
-    const vector<uint32_t>& col_to_var,
-    vector<char> &var_has_resp_row,
+    const cms_vector<lbool>& assigns,
+    const cms_vector<uint32_t>& col_to_var,
+    cms_vector<char> &var_has_resp_row,
     uint32_t& new_resp_var,
     PackedRow& tmp_col,
     PackedRow& tmp_col2,

@@ -66,7 +66,7 @@ static const uint32_t unassigned_col = std::numeric_limits<uint32_t>::max();
 EGaussian::EGaussian(
     Solver* _solver,
     const uint32_t _matrix_no,
-    const vector<Xor>& _xorclauses) :
+    const cms_vector<Xor>& _xorclauses) :
 xorclauses(_xorclauses),
 solver(_solver),
 matrix_no(_matrix_no)
@@ -133,7 +133,7 @@ struct ColSorter {
 uint32_t EGaussian::select_columnorder() {
     var_to_col.clear();
     var_to_col.resize(solver->nVars(), unassigned_col);
-    vector<uint32_t> vars_needed;
+    cms_vector<uint32_t> vars_needed;
     uint32_t largest_used_var = 0;
 
     for (const Xor& x : xorclauses) {
@@ -1202,12 +1202,12 @@ void EGaussian::print_matrix_stats(uint32_t verbosity)
     cout << std::setprecision(2);
 }
 
-vector<Lit>* EGaussian::get_reason(uint32_t row)
+cms_vector<Lit>* EGaussian::get_reason(uint32_t row)
 {
     if (!xor_reasons[row].must_recalc) {
         return &(xor_reasons[row].reason);
     }
-    vector<Lit>& tofill = xor_reasons[row].reason;
+    cms_vector<Lit>& tofill = xor_reasons[row].reason;
     tofill.clear();
 
     mat[row].get_reason(
@@ -1317,7 +1317,7 @@ void EGaussian::check_watchlist_sanity()
 
 void EGaussian::check_tracked_cols_only_one_set()
 {
-    vector<uint32_t> row_resp_for_var(num_rows, var_Undef);
+    cms_vector<uint32_t> row_resp_for_var(num_rows, var_Undef);
     for(uint32_t col = 0; col < num_cols; col++) {
         uint32_t var = col_to_var[col];
         if (var_has_resp_row[var]) {

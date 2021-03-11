@@ -41,7 +41,7 @@ TopLevelGauss::TopLevelGauss(Solver* _solver) :
     m4ri_build_all_codes();
 }
 
-bool TopLevelGauss::toplevelgauss(const vector<Xor>& _xors, vector<Lit>* _out_changed_occur)
+bool TopLevelGauss::toplevelgauss(const cms_vector<Xor>& _xors, cms_vector<Lit>* _out_changed_occur)
 {
     out_changed_occur = _out_changed_occur;
     runStats.clear();
@@ -84,7 +84,7 @@ bool TopLevelGauss::extractInfo()
 
     //Pre-filter XORs -- don't use any XOR which is not connected to ANY
     //other XOR. These cannot be XOR-ed with anything anyway
-    vector<uint32_t> varsIn(solver->nVars(), 0);
+    cms_vector<uint32_t> varsIn(solver->nVars(), 0);
     for(const Xor& x: xors) {
         for(const uint32_t v: x) {
             varsIn[v]++;
@@ -92,8 +92,8 @@ bool TopLevelGauss::extractInfo()
     }
 
     size_t i = 0;
-    vector<size_t> xorsToUse;
-    for(vector<Xor>::const_iterator
+    cms_vector<size_t> xorsToUse;
+    for(cms_vector<Xor>::const_iterator
         it = xors.begin(), end = xors.end()
         ; it != end
         ; ++it, i++
@@ -128,7 +128,7 @@ bool TopLevelGauss::extractInfo()
 
     //Go through all blocks, and extract info
     i = 0;
-    for(vector<vector<uint32_t> >::const_iterator
+    for(cms_vector<cms_vector<uint32_t> >::const_iterator
         it = blocks.begin(), end = blocks.end()
         ; it != end
         ; ++it, i++
@@ -159,7 +159,7 @@ end:
 }
 
 bool TopLevelGauss::extractInfoFromBlock(
-    const vector<uint32_t>& block
+    const cms_vector<uint32_t>& block
     , const size_t blockNum
 ) {
     assert(solver->okay());
@@ -169,7 +169,7 @@ bool TopLevelGauss::extractInfoFromBlock(
 
     //Outer-inner var mapping is needed because not all vars are in the matrix
     size_t num = 0;
-    for(vector<uint32_t>::const_iterator
+    for(cms_vector<uint32_t>::const_iterator
         it2 = block.begin(), end2 = block.end()
         ; it2 != end2
         ; it2++, num++
@@ -182,7 +182,7 @@ bool TopLevelGauss::extractInfoFromBlock(
     }
 
     //Get corresponding XORs
-    const vector<uint32_t>& thisXors = xors_in_blocks[blockNum];
+    const cms_vector<uint32_t>& thisXors = xors_in_blocks[blockNum];
     assert(thisXors.size() > 1 && "We pre-filter the set such that *every* block contains at least 2 xors");
 
     //Set up matrix
@@ -201,7 +201,7 @@ bool TopLevelGauss::extractInfoFromBlock(
 
     //Fill row-by-row
     size_t row = 0;
-    for(vector<uint32_t>::const_iterator
+    for(cms_vector<uint32_t>::const_iterator
         it = thisXors.begin(), end2 = thisXors.end()
         ; it != end2
         ; ++it, row++
@@ -224,7 +224,7 @@ bool TopLevelGauss::extractInfoFromBlock(
     mzd_echelonize_pluq(mat, true);
 
     //Examine every row if it gives some new short truth
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
     for(size_t i = 0; i < row; i++) {
         //Extract places where it's '1'
         lits.clear();
@@ -297,7 +297,7 @@ void TopLevelGauss::move_xors_into_blocks()
     }
 }
 
-void TopLevelGauss::cutIntoBlocks(const vector<size_t>& xorsToUse)
+void TopLevelGauss::cutIntoBlocks(const cms_vector<size_t>& xorsToUse)
 {
     //Clearing data we will fill below
     varToBlock.clear();
@@ -321,7 +321,7 @@ void TopLevelGauss::cutIntoBlocks(const vector<size_t>& xorsToUse)
         switch(blocksBelongTo.size()) {
             case 0: {
                 //Create new block
-                vector<uint32_t> block;
+                cms_vector<uint32_t> block;
                 for(uint32_t v: thisXor) {
                     varToBlock[v] = blocks.size();
                     block.push_back(v);
@@ -335,7 +335,7 @@ void TopLevelGauss::cutIntoBlocks(const vector<size_t>& xorsToUse)
             case 1: {
                 //Add to existing block
                 const size_t blockNum = *blocksBelongTo.begin();
-                vector<uint32_t>& block = blocks[blockNum];
+                cms_vector<uint32_t>& block = blocks[blockNum];
                 for(uint32_t v :thisXor) {
                     if (varToBlock[v] == std::numeric_limits<uint32_t>::max()) {
                         block.push_back(v);
@@ -349,10 +349,10 @@ void TopLevelGauss::cutIntoBlocks(const vector<size_t>& xorsToUse)
                 //Merge blocks into first block
                 const size_t blockNum = *blocksBelongTo.begin();
                 set<size_t>::const_iterator it2 = blocksBelongTo.begin();
-                vector<uint32_t>& finalBlock = blocks[blockNum];
+                cms_vector<uint32_t>& finalBlock = blocks[blockNum];
                 it2++; //don't merge the first into the first
                 for(set<size_t>::const_iterator end2 = blocksBelongTo.end(); it2 != end2; it2++) {
-                    for(vector<uint32_t>::const_iterator
+                    for(cms_vector<uint32_t>::const_iterator
                         it3 = blocks[*it2].begin(), end3 = blocks[*it2].end()
                         ; it3 != end3
                         ; it3++
@@ -376,9 +376,9 @@ void TopLevelGauss::cutIntoBlocks(const vector<size_t>& xorsToUse)
     }
 
     //caclulate stats
-    vector<uint32_t> new_block_num;
+    cms_vector<uint32_t> new_block_num;
     uint32_t i = 0;
-    for(vector<vector<uint32_t> >::const_iterator
+    for(cms_vector<cms_vector<uint32_t> >::const_iterator
         it = blocks.begin(), end = blocks.end()
         ; it != end
         ; ++it, i++
@@ -400,7 +400,7 @@ size_t TopLevelGauss::mem_used() const
 {
     size_t mem = 0;
     mem += xors.capacity()*sizeof(Xor);
-    mem += blocks.capacity()*sizeof(vector<uint32_t>);
+    mem += blocks.capacity()*sizeof(cms_vector<uint32_t>);
     for(size_t i = 0; i< blocks.size(); i++) {
         mem += blocks[i].capacity()*sizeof(uint32_t);
     }

@@ -24,10 +24,9 @@ THE SOFTWARE.
 #define CCNR_H
 
 #include <string>
-#include <vector>
+#include "cms_vector.h"
 #include "ccnr_mersenne.h"
 
-using std::vector;
 
 namespace CCNR {
 
@@ -66,8 +65,8 @@ struct lit {
     }
 };
 struct variable {
-    vector<lit> literals;
-    vector<int> neighbor_var_nums;
+    cms_vector<lit> literals;
+    cms_vector<int> neighbor_var_nums;
     long long score;
     long long last_flip_step;
     int unsat_appear; //how many unsat clauses it appears in
@@ -75,7 +74,7 @@ struct variable {
     bool is_in_ccd_vars;
 };
 struct clause {
-    vector<lit> literals;
+    cms_vector<lit> literals;
     int sat_count; //no. of satisfied literals
     int sat_var;
     long long weight;
@@ -91,7 +90,7 @@ class ls_solver
     bool parse_arguments(int argc, char **argv);
     bool build_instance(std::string inst);
     bool local_search(
-        const vector<bool> *init_solution = 0
+        const cms_vector<bool> *init_solution = 0
         , long long int _mems_limit = 100*1000*1000
     );
     void print_solution(bool need_verify = 0);
@@ -103,22 +102,22 @@ class ls_solver
     void set_verbosity(uint32_t verb);
 
     //formula
-    vector<variable> _vars;
-    vector<clause> _clauses;
+    cms_vector<variable> _vars;
+    cms_vector<clause> _clauses;
     int _num_vars;
     int _num_clauses;
 
     //data structure used
-    vector<int> _conflict_ct;
-    vector<int> _unsat_clauses; // list of unsatisfied clauses
-    vector<int> _index_in_unsat_clauses; // _index_in_unsat_clauses[var] tells where "var" is in _unsat_vars
-    vector<int> _unsat_vars; // clauses are UNSAT due to these vars
-    vector<int> _index_in_unsat_vars;
-    vector<int> _ccd_vars;
+    cms_vector<int> _conflict_ct;
+    cms_vector<int> _unsat_clauses; // list of unsatisfied clauses
+    cms_vector<int> _index_in_unsat_clauses; // _index_in_unsat_clauses[var] tells where "var" is in _unsat_vars
+    cms_vector<int> _unsat_vars; // clauses are UNSAT due to these vars
+    cms_vector<int> _index_in_unsat_vars;
+    cms_vector<int> _ccd_vars;
 
     //solution information
-    vector<uint8_t> _solution;
-    vector<uint8_t> _best_solution;
+    cms_vector<uint8_t> _solution;
+    cms_vector<uint8_t> _best_solution;
 
     //functions for buiding data structure
     bool make_space();
@@ -155,7 +154,7 @@ class ls_solver
     long long _delta_total_clause_weight;
 
     //main functions
-    void initialize(const vector<bool> *init_solution = 0);
+    void initialize(const cms_vector<bool> *init_solution = 0);
     void initialize_variable_datas();
     void clear_prev_data();
     int pick_var();

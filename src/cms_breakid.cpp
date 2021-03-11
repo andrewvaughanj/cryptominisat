@@ -39,8 +39,8 @@ BreakID::BreakID(Solver* _solver):
 }
 
 void BreakID::updateVars(
-    const vector<uint32_t>& outerToInter
-    , const vector<uint32_t>& /*interToOuter*/)
+    const cms_vector<uint32_t>& outerToInter
+    , const cms_vector<uint32_t>& /*interToOuter*/)
 {
     if (symm_var != var_Undef) {
         symm_var = getUpdatedVar(symm_var, outerToInter);
@@ -161,7 +161,7 @@ void BreakID::set_up_time_lim()
 bool BreakID::add_clauses()
 {
     //Add binary clauses
-    vector<Lit> this_clause;
+    cms_vector<Lit> this_clause;
     for(size_t i2 = 0; i2 < solver->nVars()*2; i2++) {
         Lit lit = Lit::toLit(i2);
         for(const Watched& w: solver->watches[lit]) {
@@ -312,7 +312,7 @@ bool BreakID::doit()
 
 void BreakID::get_outer_permutations()
 {
-    vector<unordered_map<BID::BLit, BID::BLit>> perms_inter;
+    cms_vector<unordered_map<BID::BLit, BID::BLit>> perms_inter;
     breakid->get_perms(&perms_inter);
     for(const auto& p: perms_inter) {
         unordered_map<Lit, Lit> outer;
@@ -384,11 +384,11 @@ bool BreakID::remove_duplicates()
 
     size_t old_size = dedup_cls.size();
     if (dedup_cls.size() > 1 && true) {
-        vector<ClOffset>::iterator prev = dedup_cls.begin();
-        vector<ClOffset>::iterator i = dedup_cls.begin();
+        cms_vector<ClOffset>::iterator prev = dedup_cls.begin();
+        cms_vector<ClOffset>::iterator i = dedup_cls.begin();
         i++;
         Clause* prevcl = solver->cl_alloc.ptr(*prev);
-        for(vector<ClOffset>::iterator end = dedup_cls.end(); i != end; i++) {
+        for(cms_vector<ClOffset>::iterator end = dedup_cls.end(); i != end; i++) {
             Clause* cl = solver->cl_alloc.ptr(*i);
             if (!equiv(cl, prevcl)) {
                 prev++;
@@ -438,7 +438,7 @@ void BreakID::break_symms_in_cms()
 
     auto brk = breakid->get_brk_cls();
     for (const auto& cl: brk) {
-        vector<Lit>* cl2 = (vector<Lit>*)&cl;
+        cms_vector<Lit>* cl2 = (cms_vector<Lit>*)&cl;
         if (solver->conf.breakid_use_assump) {
             cl2->push_back(Lit(symm_var, false));
         }

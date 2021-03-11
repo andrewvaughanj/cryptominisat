@@ -381,7 +381,7 @@ bool BVA::bva_simplify_system()
 
 void BVA::update_touched_lits_in_bva()
 {
-    const vector<uint32_t>& touched_list = touched.getTouchedList();
+    const cms_vector<uint32_t>& touched_list = touched.getTouchedList();
     for(const uint32_t lit_uint: touched_list) {
         const Lit lit = Lit::toLit(lit_uint);
         if (var_bva_order.inHeap(lit.toInt())) {
@@ -400,7 +400,7 @@ void BVA::update_touched_lits_in_bva()
 void BVA::fill_m_cls_lits_and_red()
 {
     m_cls_lits.clear();
-    vector<Lit> tmp;
+    cms_vector<Lit> tmp;
     for(OccurClause& cl: m_cls) {
         tmp.clear();
         bool red;
@@ -471,7 +471,7 @@ void BVA::remove_matching_clause(
 }
 
 Clause* BVA::find_cl_for_bva(
-    const vector<Lit>& torem
+    const cms_vector<Lit>& torem
     , const bool red
 ) const {
     Clause* cl = NULL;
@@ -515,7 +515,7 @@ Clause* BVA::find_cl_for_bva(
 
 bool BVA::add_longer_clause(const Lit new_lit, const OccurClause& cl)
 {
-    vector<Lit>& lits = bva_tmp_lits;
+    cms_vector<Lit>& lits = bva_tmp_lits;
     lits.clear();
     switch(cl.ws.getType()) {
         case CMSat::watch_binary_t: {

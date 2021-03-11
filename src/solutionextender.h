@@ -41,22 +41,22 @@ class SolutionExtender
     public:
         SolutionExtender(Solver* _solver, OccSimplifier* simplifier);
         void extend();
-        bool addClause(const vector<Lit>& lits, const uint32_t blockedOn);
+        bool addClause(const cms_vector<Lit>& lits, const uint32_t blockedOn);
         void dummyBlocked(const uint32_t blockedOn);
 
     private:
         Solver* solver;
         OccSimplifier* simplifier;
 
-        bool satisfied(const vector<Lit>& lits) const;
+        bool satisfied(const cms_vector<Lit>& lits) const;
         bool contains_var(
-            const vector<Lit>& lits
+            const cms_vector<Lit>& lits
             , const uint32_t tocontain
         ) const;
 };
 
 inline bool SolutionExtender::contains_var(
-    const vector<Lit>& lits
+    const cms_vector<Lit>& lits
     , const uint32_t tocontain
 ) const {
     for(const Lit lit: lits) {

@@ -99,8 +99,8 @@ void VarReplacer::save_on_var_memory()
 }
 
 void VarReplacer::updateVars(
-    const std::vector< uint32_t >& /*outerToInter*/
-    , const std::vector< uint32_t >& /*interToOuter*/
+    const cms_vector< uint32_t >& /*outerToInter*/
+    , const cms_vector< uint32_t >& /*interToOuter*/
 ) {
     //Nothing to do, we keep OUTER in all these data structures
     //hence, it needs no update
@@ -109,7 +109,7 @@ void VarReplacer::updateVars(
 void VarReplacer::printReplaceStats() const
 {
     uint32_t i = 0;
-    for (vector<Lit>::const_iterator
+    for (cms_vector<Lit>::const_iterator
         it = table.begin(); it != table.end()
         ; ++it, i++
     ) {
@@ -197,7 +197,7 @@ void VarReplacer::attach_delayed_attach()
 void VarReplacer::update_all_vardata_activities()
 {
     uint32_t var = 0;
-    for (vector<Lit>::const_iterator
+    for (cms_vector<Lit>::const_iterator
         it = table.begin(); it != table.end()
         ; ++it, var++
     ) {
@@ -329,7 +329,7 @@ end:
     return solver->okay();
 }
 
-bool VarReplacer::replace_xor_clauses(vector<Xor>& xors)
+bool VarReplacer::replace_xor_clauses(cms_vector<Xor>& xors)
 {
     for(Xor& x: xors) {
         uint32_t j = 0;
@@ -520,12 +520,12 @@ bool VarReplacer::replaceImplicit()
 /**
 @brief Replaces variables in long clauses
 */
-bool VarReplacer::replace_set(vector<ClOffset>& cs)
+bool VarReplacer::replace_set(cms_vector<ClOffset>& cs)
 {
     assert(!solver->drat->something_delayed());
-    vector<ClOffset>::iterator i = cs.begin();
-    vector<ClOffset>::iterator j = i;
-    for (vector<ClOffset>::iterator end = cs.end(); i != end; i++) {
+    cms_vector<ClOffset>::iterator i = cs.begin();
+    cms_vector<ClOffset>::iterator j = i;
+    for (cms_vector<ClOffset>::iterator end = cs.end(); i != end; i++) {
         runStats.bogoprops += 3;
         assert(!solver->drat->something_delayed());
 
@@ -712,9 +712,9 @@ void VarReplacer::extend_model(const uint32_t var)
     }
 }
 
-void VarReplacer::extend_pop_queue(vector<Lit>& pop)
+void VarReplacer::extend_pop_queue(cms_vector<Lit>& pop)
 {
-    vector<Lit> extra;
+    cms_vector<Lit> extra;
     for (Lit p: pop) {
         const auto& repl = reverseTable[p.var()];
         for(uint32_t x: repl) {
@@ -974,7 +974,7 @@ bool VarReplacer::update_table_and_reversetable(const Lit lit1, const Lit lit2)
 */
 void VarReplacer::setAllThatPointsHereTo(const uint32_t var, const Lit lit)
 {
-    map<uint32_t, vector<uint32_t> >::iterator it = reverseTable.find(var);
+    map<uint32_t, cms_vector<uint32_t> >::iterator it = reverseTable.find(var);
     if (it != reverseTable.end()) {
         for(const uint32_t var2: it->second) {
             assert(table[var2].var() == var);
@@ -1087,7 +1087,7 @@ size_t VarReplacer::mem_used() const
     b += scc_finder->mem_used();
     b += delayedEnqueue.capacity()*sizeof(Lit);
     b += table.capacity()*sizeof(Lit);
-    for(map<uint32_t, vector<uint32_t> >::const_iterator
+    for(map<uint32_t, cms_vector<uint32_t> >::const_iterator
         it = reverseTable.begin(), end = reverseTable.end()
         ; it != end
         ; ++it
@@ -1095,7 +1095,7 @@ size_t VarReplacer::mem_used() const
         b += it->second.capacity()*sizeof(Lit);
     }
     //TODO under-counting
-    b += reverseTable.size()*(sizeof(uint32_t) + sizeof(vector<uint32_t>));
+    b += reverseTable.size()*(sizeof(uint32_t) + sizeof(cms_vector<uint32_t>));
 
     return b;
 }
@@ -1103,7 +1103,7 @@ size_t VarReplacer::mem_used() const
 uint32_t VarReplacer::print_equivalent_literals(bool outer_numbering, std::ostream *os) const
 {
     uint32_t num = 0;
-    vector<Lit> tmpCl;
+    cms_vector<Lit> tmpCl;
     for (uint32_t var = 0; var < table.size(); var++) {
         const Lit lit = table[var];
         if (lit.var() == var)
@@ -1251,7 +1251,7 @@ void VarReplacer::build_fast_inter_replace_lookup()
 
 void VarReplacer::destroy_fast_inter_replace_lookup()
 {
-    vector<Lit> tmp;
+    cms_vector<Lit> tmp;
     fast_inter_replace_lookup.swap(tmp);
 }
 
@@ -1269,11 +1269,11 @@ uint32_t VarReplacer::get_var_replaced_with(uint32_t var) const
     return solver->map_outer_to_inter(var2);
 }
 
-vector<uint32_t> VarReplacer::get_vars_replacing(uint32_t var) const
+cms_vector<uint32_t> VarReplacer::get_vars_replacing(uint32_t var) const
 {
-    vector<uint32_t> ret;
+    cms_vector<uint32_t> ret;
     var = solver->map_inter_to_outer(var);
-    map<uint32_t, vector<uint32_t> >::const_iterator it = reverseTable.find(var);
+    map<uint32_t, cms_vector<uint32_t> >::const_iterator it = reverseTable.find(var);
     if (it != reverseTable.end()) {
         for(uint32_t v: it->second) {
             ret.push_back(solver->map_outer_to_inter(v));
@@ -1283,9 +1283,9 @@ vector<uint32_t> VarReplacer::get_vars_replacing(uint32_t var) const
     return ret;
 }
 
-vector<pair<Lit, Lit> > VarReplacer::get_all_binary_xors_outer() const
+cms_vector<pair<Lit, Lit> > VarReplacer::get_all_binary_xors_outer() const
 {
-    vector<pair<Lit, Lit> > ret;
+    cms_vector<pair<Lit, Lit> > ret;
     for(size_t i = 0; i < table.size(); i++) {
         if (table[i] != Lit(i, false)) {
             ret.push_back(std::make_pair(Lit(i, false), table[i]));
@@ -1311,7 +1311,7 @@ void VarReplacer::load_state(SimpleInFile& f)
     f.get_vector(table);
     replacedVars = f.get_uint32_t();
 
-    vector<uint32_t> point_to;
+    cms_vector<uint32_t> point_to;
     uint32_t num = f.get_uint32_t();
     for(uint32_t i = 0; i < num; i++)
     {

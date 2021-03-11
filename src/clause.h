@@ -25,7 +25,7 @@ THE SOFTWARE.
 #define CLAUSE_H
 
 #include <cstdio>
-#include <vector>
+#include "cms_vector.h"
 #include <sys/types.h>
 #include <string.h>
 #include <limits>

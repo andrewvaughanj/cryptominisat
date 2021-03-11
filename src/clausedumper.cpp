@@ -95,10 +95,10 @@ size_t ClauseDumper::get_preprocessor_num_cls(bool outer_numbering) {
     num_cls += solver->longIrredCls.size();
     num_cls += solver->binTri.irredBins;
     if (!outer_numbering) {
-        vector<Lit> units = solver->get_toplevel_units_internal(false);
+        cms_vector<Lit> units = solver->get_toplevel_units_internal(false);
         num_cls += units.size();
     } else {
-        vector<Lit> units = solver->get_zero_assigned_lits();
+        cms_vector<Lit> units = solver->get_zero_assigned_lits();
         num_cls += units.size();
     }
     num_cls += solver->undef_must_set_vars.size();
@@ -192,12 +192,12 @@ void ClauseDumper::dump_unit_cls(std::ostream *out, bool outer_numbering)
     *out << "c --------- unit clauses" << endl;
     if (outer_numbering) {
         //'trail' cannot be trusted between 0....size()
-        vector<Lit> lits = solver->get_zero_assigned_lits();
+        cms_vector<Lit> lits = solver->get_zero_assigned_lits();
         for(Lit lit: lits) {
             *out << lit << " 0\n";
         }
     } else {
-        vector<Lit> units = solver->get_toplevel_units_internal(false);
+        cms_vector<Lit> units = solver->get_toplevel_units_internal(false);
         for(Lit l: units) {
             *out << l << " 0" << "\n";
         }
@@ -294,10 +294,10 @@ void ClauseDumper::dump_eq_lits(std::ostream *out, bool outer_numbering)
 
 void ClauseDumper::dump_clauses(
     std::ostream *out,
-    const vector<ClOffset>& cls
+    const cms_vector<ClOffset>& cls
     , const bool outer_numbering
 ) {
-    for(vector<ClOffset>::const_iterator
+    for(cms_vector<ClOffset>::const_iterator
         it = cls.begin(), end = cls.end()
         ; it != end
         ; ++it

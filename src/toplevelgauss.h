@@ -25,9 +25,8 @@ THE SOFTWARE.
 
 #include "xor.h"
 #include "toplevelgaussabst.h"
-#include <vector>
+#include "cms_vector.h"
 #include <set>
-using std::vector;
 using std::set;
 
 namespace CMSat {
@@ -38,7 +37,7 @@ class TopLevelGauss: public TopLevelGaussAbst
 {
 public:
     explicit TopLevelGauss(Solver* _solver);
-    bool toplevelgauss(const vector<Xor>& _xors, vector<Lit>* _out_changed_occur) override;
+    bool toplevelgauss(const cms_vector<Xor>& _xors, cms_vector<Lit>* _out_changed_occur) override;
 
     struct Stats
     {
@@ -79,23 +78,23 @@ public:
 
 private:
     Solver* solver;
-    vector<Lit>* out_changed_occur; // may have changed the occur count of these literals
+    cms_vector<Lit>* out_changed_occur; // may have changed the occur count of these literals
 
     bool extractInfo();
-    void cutIntoBlocks(const vector<size_t>& xorsToUse);
-    bool extractInfoFromBlock(const vector<uint32_t>& block, const size_t blockNum);
+    void cutIntoBlocks(const cms_vector<size_t>& xorsToUse);
+    bool extractInfoFromBlock(const cms_vector<uint32_t>& block, const size_t blockNum);
     void move_xors_into_blocks();
 
     //Major calculated data and indexes to this data
-    vector<vector<uint32_t> > blocks; ///<Blocks of vars that are in groups of XORs
-    vector<uint32_t> varToBlock; ///<variable-> block index map
+    cms_vector<cms_vector<uint32_t> > blocks; ///<Blocks of vars that are in groups of XORs
+    cms_vector<uint32_t> varToBlock; ///<variable-> block index map
 
     //Temporaries for putting xors into matrix, and extracting info from matrix
-    vector<uint32_t> outerToInterVarMap;
-    vector<uint32_t> interToOUterVarMap;
+    cms_vector<uint32_t> outerToInterVarMap;
+    cms_vector<uint32_t> interToOUterVarMap;
 
-    vector<Xor> xors;
-    vector<vector<uint32_t> > xors_in_blocks;
+    cms_vector<Xor> xors;
+    cms_vector<cms_vector<uint32_t> > xors_in_blocks;
 };
 
 }

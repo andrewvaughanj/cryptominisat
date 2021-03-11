@@ -105,7 +105,7 @@ bool CompleteDetachReatacher::reattachLongs(bool removeStatsFirst)
 }
 
 void CompleteDetachReatacher::attachClauses(
-    vector<ClOffset>& cs
+    cms_vector<ClOffset>& cs
 ) {
     for (ClOffset offs: cs) {
         Clause* cl = solver->cl_alloc.ptr(offs);
@@ -129,12 +129,12 @@ void CompleteDetachReatacher::attachClauses(
 May change solver->ok to FALSE (!)
 */
 void CompleteDetachReatacher::cleanAndAttachClauses(
-    vector<ClOffset>& cs
+    cms_vector<ClOffset>& cs
     , bool removeStatsFirst
 ) {
-    vector<ClOffset>::iterator i = cs.begin();
-    vector<ClOffset>::iterator j = i;
-    for (vector<ClOffset>::iterator end = cs.end(); i != end; i++) {
+    cms_vector<ClOffset>::iterator i = cs.begin();
+    cms_vector<ClOffset>::iterator j = i;
+    for (cms_vector<ClOffset>::iterator end = cs.end(); i != end; i++) {
         assert(!solver->drat->something_delayed());
         Clause* cl = solver->cl_alloc.ptr(*i);
 

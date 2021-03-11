@@ -56,13 +56,13 @@ c_lbool toc(lbool x)
 }
 
 template<typename T>
-std::vector<T> wrap(const T* vals, size_t num_vals)
+cms_vector<T> wrap(const T* vals, size_t num_vals)
 {
-    return std::vector<T>(vals, vals + num_vals);
+    return cms_vector<T>(vals, vals + num_vals);
 }
 
 template<typename Dest, typename T>
-Dest unwrap(const std::vector<T>& vec)
+Dest unwrap(const cms_vector<T>& vec)
 {
     return Dest {toc(vec.data()), vec.size()};
 }

@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef DATASYNC_SERVER_H
 #define DATASYNC_SERVER_H
 
-#include <vector>
+#include "cms_vector.h"
 #include "mpi.h"
 
 #include "solvertypes.h"
@@ -41,20 +41,20 @@ class DataSyncServer {
         void sendDataToAll();
         void forwardNeedToInterrupt();
 
-        std::vector<uint32_t> syncMPIFinish;
-        std::vector<std::vector<Lit> > bins;
-        std::vector<lbool> value;
+        cms_vector<uint32_t> syncMPIFinish;
+        cms_vector<cms_vector<Lit> > bins;
+        cms_vector<lbool> value;
 
         bool ok;
 
         uint32_t *sendData;
 
-        std::vector<MPI_Request> sendRequests;
-        std::vector<bool> sendRequestsFinished;
+        cms_vector<MPI_Request> sendRequests;
+        cms_vector<bool> sendRequestsFinished;
 
-        std::vector<bool> alreadyInterrupted;
-        std::vector<bool> alreadySentInterrupt;
-        std::vector<MPI_Request> interruptRequests;
+        cms_vector<bool> alreadyInterrupted;
+        cms_vector<bool> alreadySentInterrupt;
+        cms_vector<MPI_Request> interruptRequests;
         int numAlreadyInterrupted;
 
         int mpiSize;

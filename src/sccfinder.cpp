@@ -21,7 +21,7 @@ THE SOFTWARE.
 ***********************************************/
 
 #include <iostream>
-#include <vector>
+#include "cms_vector.h"
 #include <iomanip>
 
 #include "solvertypes.h"

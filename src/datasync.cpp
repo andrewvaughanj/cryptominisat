@@ -85,8 +85,8 @@ void DataSync::rebuild_bva_map()
 }
 
 void DataSync::updateVars(
-    const vector<uint32_t>& /*outerToInter*/
-    , const vector<uint32_t>& /*interToOuter*/
+    const cms_vector<uint32_t>& /*outerToInter*/
+    , const cms_vector<uint32_t>& /*interToOuter*/
 ) {
 }
 
@@ -200,7 +200,7 @@ bool DataSync::syncBinFromOthers()
             continue;
         }
 
-        vector<Lit>& bins = *sharedData->bins[wsLit].data;
+        cms_vector<Lit>& bins = *sharedData->bins[wsLit].data;
         watch_subarray ws = solver->watches[lit1];
 
         assert(syncFinish.size() > wsLit);
@@ -216,7 +216,7 @@ bool DataSync::syncBinFromOthers()
 
 bool DataSync::syncBinFromOthers(
     const Lit lit
-    , const vector<Lit>& bins
+    , const cms_vector<Lit>& bins
     , uint32_t& finished
     , watch_subarray ws
 ) {
@@ -232,7 +232,7 @@ bool DataSync::syncBinFromOthers(
         }
     }
 
-    vector<Lit> lits(2);
+    cms_vector<Lit> lits(2);
     for (uint32_t i = finished; i < bins.size(); i++) {
         Lit otherLit = bins[i];
         otherLit = solver->map_to_with_bva(otherLit);
@@ -283,7 +283,7 @@ void DataSync::addOneBinToOthers(Lit lit1, Lit lit2)
         return;
     }
 
-    vector<Lit>& bins = *sharedData->bins[lit1.toInt()].data;
+    cms_vector<Lit>& bins = *sharedData->bins[lit1.toInt()].data;
     for (const Lit lit : bins) {
         if (lit == lit2)
             return;
@@ -491,7 +491,7 @@ void DataSync::syncToMPI()
         mpiSendData = NULL;
     }
 
-    vector<uint32_t> data;
+    cms_vector<uint32_t> data;
     data.push_back((uint32_t)solver->nVars());
     for (uint32_t var = 0; var < solver->nVars(); var++) {
         data.push_back(toInt(solver->value(var)));

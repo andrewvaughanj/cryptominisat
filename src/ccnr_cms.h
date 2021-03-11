@@ -65,15 +65,15 @@ private:
     enum class add_cl_ret {added_cl, skipped_cl, unsat};
     template<class T>
     add_cl_ret add_this_clause(const T& cl);
-    vector<int> yals_lits;
-    vector<uint16_t>& seen;
-    vector<Lit>& toClear;
+    cms_vector<int> yals_lits;
+    cms_vector<uint16_t>& seen;
+    cms_vector<Lit>& toClear;
 
     //Bumping of variable scores
-    vector<pair<uint32_t, double>> get_bump_based_on_cls();
-    vector<pair<uint32_t, double>> get_bump_based_on_var_scores();
-    vector<pair<uint32_t, double>> get_bump_based_on_var_flips();
-    vector<pair<uint32_t, double>> get_bump_based_on_conflict_ct();
+    cms_vector<pair<uint32_t, double>> get_bump_based_on_cls();
+    cms_vector<pair<uint32_t, double>> get_bump_based_on_var_scores();
+    cms_vector<pair<uint32_t, double>> get_bump_based_on_var_flips();
+    cms_vector<pair<uint32_t, double>> get_bump_based_on_conflict_ct();
 };
 
 }

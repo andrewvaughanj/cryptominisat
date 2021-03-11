@@ -70,7 +70,7 @@ public:
     }
 
     template<class T>
-    void put_vector(const vector<T>& d)
+    void put_vector(const cms_vector<T>& d)
     {
         put_uint64_t(d.size());
         if (d.size() == 0)
@@ -87,7 +87,7 @@ public:
 
 private:
     std::ofstream* outf = NULL;
-    //vector<char> buffer;
+    //cms_vector<char> buffer;
 
     void put(const void* ptr, size_t num)
     {
@@ -142,7 +142,7 @@ public:
     }
 
     template<class T>
-    void get_vector(vector<T>& d)
+    void get_vector(cms_vector<T>& d)
     {
         assert(d.empty());
         uint64_t sz = get_uint64_t();

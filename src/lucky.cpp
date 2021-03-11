@@ -290,7 +290,7 @@ bool CMSat::Lucky::horn_sat(bool polar)
     }
 
     //NOTE: propagating WHILE going through a watchlist will SEGFAULT
-    vector<Lit> toset;
+    cms_vector<Lit> toset;
     for(uint32_t i = 0; i < solver->nVars()*2; i++) {
         Lit lit = Lit::toLit(i);
         if (solver->value(lit) == l_True) {

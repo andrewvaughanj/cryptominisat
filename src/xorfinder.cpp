@@ -53,8 +53,8 @@ void XorFinder::find_xors_based_on_long_clauses()
     assert(solver->no_marked_clauses());
     #endif
 
-    vector<Lit> lits;
-    for (vector<ClOffset>::iterator
+    cms_vector<Lit> lits;
+    for (cms_vector<ClOffset>::iterator
         it = occsimplifier->clauses.begin()
         , end = occsimplifier->clauses.end()
         ; it != end && xor_find_time_limit > 0
@@ -100,7 +100,7 @@ void XorFinder::find_xors_based_on_long_clauses()
     }
 }
 
-void XorFinder::clean_equivalent_xors(vector<Xor>& txors)
+void XorFinder::clean_equivalent_xors(cms_vector<Xor>& txors)
 {
     if (!txors.empty()) {
         size_t orig_size = txors.size();
@@ -109,11 +109,11 @@ void XorFinder::clean_equivalent_xors(vector<Xor>& txors)
         }
         std::sort(txors.begin(), txors.end());
 
-        vector<Xor>::iterator i = txors.begin();
-        vector<Xor>::iterator j = i;
+        cms_vector<Xor>::iterator i = txors.begin();
+        cms_vector<Xor>::iterator j = i;
         i++;
         uint64_t size = 1;
-        for(vector<Xor>::iterator end = txors.end(); i != end; i++) {
+        for(cms_vector<Xor>::iterator end = txors.end(); i != end; i++) {
             if (j->vars == i->vars && i->rhs == j->rhs) {
                 j->merge_clash(*i, seen);
                 j->detached |= i->detached;
@@ -225,7 +225,7 @@ void XorFinder::print_found_xors()
 {
     if (solver->conf.verbosity >= 5) {
         cout << "c Found XORs: " << endl;
-        for(vector<Xor>::const_iterator
+        for(cms_vector<Xor>::const_iterator
             it = xors.begin(), end = xors.end()
             ; it != end
             ; ++it
@@ -236,7 +236,7 @@ void XorFinder::print_found_xors()
     }
 }
 
-void XorFinder::findXor(vector<Lit>& lits, const ClOffset offset, cl_abst_type abst)
+void XorFinder::findXor(cms_vector<Lit>& lits, const ClOffset offset, cl_abst_type abst)
 {
     //Set this clause as the base for the XOR, fill 'seen'
     xor_find_time_limit -= lits.size()/4+1;
@@ -272,7 +272,7 @@ void XorFinder::findXor(vector<Lit>& lits, const ClOffset offset, cl_abst_type a
 
     if (poss_xor.foundAll()) {
         std::sort(lits.begin(), lits.end());
-        Xor found_xor(lits, poss_xor.getRHS(), vector<uint32_t>());
+        Xor found_xor(lits, poss_xor.getRHS(), cms_vector<uint32_t>());
         #if defined(SLOW_DEBUG) || defined(XOR_DEBUG)
         for(Lit lit: lits) {
             assert(solver->varData[lit.var()].removed == Removed::none);
@@ -407,13 +407,13 @@ void XorFinder::findXorMatch(watch_subarray_const occ, const Lit wlit)
     }
 }
 
-vector<Xor> XorFinder::remove_xors_without_connecting_vars(const vector<Xor>& this_xors)
+cms_vector<Xor> XorFinder::remove_xors_without_connecting_vars(const cms_vector<Xor>& this_xors)
 {
     if (this_xors.empty())
         return this_xors;
 
     double myTime = cpuTime();
-    vector<Xor> ret;
+    cms_vector<Xor> ret;
     assert(toClear.empty());
 
     //Fill "seen" with vars used
@@ -473,7 +473,7 @@ vector<Xor> XorFinder::remove_xors_without_connecting_vars(const vector<Xor>& th
     return ret;
 }
 
-bool XorFinder::xor_together_xors(vector<Xor>& this_xors)
+bool XorFinder::xor_together_xors(cms_vector<Xor>& this_xors)
 {
     if (occcnt.size() != solver->nVars())
         grab_mem();
@@ -521,7 +521,7 @@ bool XorFinder::xor_together_xors(vector<Xor>& this_xors)
 
     //Don't XOR together over the sampling vars
     //or variables that are in regular clauses
-    vector<uint32_t> to_clear_2;
+    cms_vector<uint32_t> to_clear_2;
     if (solver->conf.sampling_vars) {
         for(uint32_t outside_var: *solver->conf.sampling_vars) {
             uint32_t outer_var = solver->map_to_with_bva(outside_var);
@@ -577,7 +577,7 @@ bool XorFinder::xor_together_xors(vector<Xor>& this_xors)
         while(!interesting.empty()) {
             #ifdef SLOW_DEBUG
             {
-                vector<uint32_t> check;
+                cms_vector<uint32_t> check;
                 check.resize(solver->nVars(), 0);
                 for(size_t i = 0; i < this_xors.size(); i++) {
                     const Xor& x = this_xors[i];
@@ -757,7 +757,7 @@ bool XorFinder::xor_together_xors(vector<Xor>& this_xors)
     return solver->okay();
 }
 
-void XorFinder::clean_xors_from_empty(vector<Xor>& thisxors)
+void XorFinder::clean_xors_from_empty(cms_vector<Xor>& thisxors)
 {
     size_t j = 0;
     for(size_t i = 0;i < thisxors.size(); i++) {
@@ -778,7 +778,7 @@ void XorFinder::clean_xors_from_empty(vector<Xor>& thisxors)
     thisxors.resize(j);
 }
 
-bool XorFinder::add_new_truths_from_xors(vector<Xor>& this_xors, vector<Lit>* out_changed_occur)
+bool XorFinder::add_new_truths_from_xors(cms_vector<Xor>& this_xors, cms_vector<Lit>* out_changed_occur)
 {
     size_t origTrailSize  = solver->trail_size();
     size_t origBins = solver->binTri.redBins;
@@ -823,7 +823,7 @@ bool XorFinder::add_new_truths_from_xors(vector<Xor>& this_xors, vector<Lit>* ou
 
             case 2: {
                 //RHS == 1 means both same is not allowed
-                vector<Lit> lits{Lit(x[0], false), Lit(x[1], true^x.rhs)};
+                cms_vector<Lit> lits{Lit(x[0], false), Lit(x[1], true^x.rhs)};
                 solver->add_clause_int(lits, true, ClauseStats(), out_changed_occur != NULL);
                 if (!solver->ok) {
                     goto end;

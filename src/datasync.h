@@ -44,8 +44,8 @@ class DataSync
         void save_on_var_memory();
         void rebuild_bva_map();
         void updateVars(
-           const vector<uint32_t>& outerToInter
-            , const vector<uint32_t>& interToOuter
+           const cms_vector<uint32_t>& outerToInter
+            , const cms_vector<uint32_t>& interToOuter
         );
 
         template <class T> void signalNewBinClause(T& ps);
@@ -65,18 +65,18 @@ class DataSync
         Lit map_outside_without_bva(Lit lit) const;
         bool shareUnitData();
         bool syncBinFromOthers();
-        bool syncBinFromOthers(const Lit lit, const vector<Lit>& bins, uint32_t& finished, watch_subarray ws);
+        bool syncBinFromOthers(const Lit lit, const cms_vector<Lit>& bins, uint32_t& finished, watch_subarray ws);
         void syncBinToOthers();
         void clear_set_binary_values();
         void addOneBinToOthers(const Lit lit1, const Lit lit2);
         bool shareBinData();
 
         //stuff to sync
-        vector<std::pair<Lit, Lit> > newBinClauses;
+        cms_vector<std::pair<Lit, Lit> > newBinClauses;
 
         //stats
         uint64_t lastSyncConf = 0;
-        vector<uint32_t> syncFinish;
+        cms_vector<uint32_t> syncFinish;
         Stats stats;
 
         //Other systems
@@ -97,7 +97,7 @@ class DataSync
             uint32_t& thisGotUnitData,
             uint32_t& thisSentUnitData
         );
-        vector<uint32_t> syncMPIFinish;
+        cms_vector<uint32_t> syncMPIFinish;
         MPI_Request   sendReq;
         uint32_t*     mpiSendData;
 
@@ -111,9 +111,9 @@ class DataSync
 
         //misc
         uint32_t numCalls = 0;
-        vector<uint16_t>& seen;
-        vector<Lit>& toClear;
-        vector<uint32_t> outer_to_without_bva_map;
+        cms_vector<uint16_t>& seen;
+        cms_vector<Lit>& toClear;
+        cms_vector<uint32_t> outer_to_without_bva_map;
         bool must_rebuild_bva_map = false;
 };
 

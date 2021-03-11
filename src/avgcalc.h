@@ -26,13 +26,12 @@ THE SOFTWARE.
 #include "constants.h"
 #include <limits>
 #include <cassert>
-#include <vector>
+#include "cms_vector.h"
 #include <cstring>
 #include <sstream>
 #include <iomanip>
 
 namespace CMSat {
-using std::vector;
 
 #define AVGCALC_NEED_MIN_MAX
 

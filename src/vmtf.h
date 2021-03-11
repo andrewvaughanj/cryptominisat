@@ -22,9 +22,8 @@ THE SOFTWARE.
 
 #ifndef VMTF_H
 
-#include <vector>
+#include "cms_vector.h"
 #include <cstdint>
-using std::vector;
 
 namespace CMSat {
 
@@ -34,7 +33,7 @@ struct Link {
     uint32_t next = std::numeric_limits<uint32_t>::max();
 };
 
-typedef vector<Link> Links;
+typedef cms_vector<Link> Links;
 
 struct Queue {
 

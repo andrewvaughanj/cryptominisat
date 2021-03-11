@@ -173,7 +173,7 @@ bool MatrixFinder::findMatrixes(bool& can_detach, bool simplify_xors)
         return true;
     }
 
-    vector<uint32_t> newSet;
+    cms_vector<uint32_t> newSet;
     set<uint32_t> tomerge;
     for (const Xor& x : xors) {
         if (belong_same_matrix(x)) {
@@ -209,13 +209,13 @@ bool MatrixFinder::findMatrixes(bool& can_detach, bool simplify_xors)
     }
 
     #ifdef VERBOSE_DEBUG
-    for (map<uint32_t, vector<uint32_t> >::iterator it = reverseTable.begin()
+    for (map<uint32_t, cms_vector<uint32_t> >::iterator it = reverseTable.begin()
         , end = reverseTable.end()
         ; it != end
         ; ++it
     ) {
         cout << "-- set: " << endl;
-        for (vector<uint32_t>::iterator it2 = it->second.begin(), end2 = it->second.end()
+        for (cms_vector<uint32_t>::iterator it2 = it->second.begin(), end2 = it->second.end()
             ; it2 != end2
             ; it2++
         ) {
@@ -260,8 +260,8 @@ uint32_t MatrixFinder::setMatrixes()
         }
     }
 
-    vector<MatrixShape> matrix_shape;
-    vector<vector<Xor> > xorsInMatrix(matrix_no);
+    cms_vector<MatrixShape> matrix_shape;
+    cms_vector<cms_vector<Xor> > xorsInMatrix(matrix_no);
 
     for (uint32_t i = 0; i < matrix_no; i++) {
         matrix_shape.push_back(MatrixShape(i));

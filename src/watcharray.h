@@ -26,10 +26,9 @@ THE SOFTWARE.
 
 #include "watched.h"
 #include "Vec.h"
-#include <vector>
+#include "cms_vector.h"
 
 namespace CMSat {
-using std::vector;
 
 typedef vec<Watched>& watch_subarray;
 typedef const vec<Watched>& watch_subarray_const;
@@ -38,8 +37,8 @@ class watch_array
 {
 public:
     vec<vec<Watched> > watches;
-    vector<Lit> smudged_list;
-    vector<char> smudged;
+    cms_vector<Lit> smudged_list;
+    cms_vector<char> smudged;
 
     void smudge(const Lit lit) {
         if (!smudged[lit.toInt()]) {
@@ -48,7 +47,7 @@ public:
         }
     }
 
-    const vector<Lit>& get_smudged_list() const {
+    const cms_vector<Lit>& get_smudged_list() const {
         return smudged_list;
     }
 
@@ -181,7 +180,7 @@ public:
     size_t mem_used_array() const
     {
         size_t mem = 0;
-        mem += watches.capacity()*sizeof(vector<Watched>);
+        mem += watches.capacity()*sizeof(cms_vector<Watched>);
         mem += sizeof(watch_array);
         return mem;
     }

@@ -59,7 +59,7 @@ void CompFinder::print_found_components() const
     size_t totalSmallSize = 0;
     size_t i = 0;
     size_t print_limit = 300;
-    for(map<uint32_t, vector<uint32_t> >::const_iterator
+    for(map<uint32_t, cms_vector<uint32_t> >::const_iterator
         it = reverseTable.begin(), end = reverseTable.end()
         ; it != end
         ; ++it, i++
@@ -85,7 +85,7 @@ void CompFinder::print_found_components() const
 
 bool CompFinder::reverse_table_is_correct() const
 {
-    for (map<uint32_t, vector<uint32_t> >::const_iterator
+    for (map<uint32_t, cms_vector<uint32_t> >::const_iterator
         it = reverseTable.begin()
         ; it != reverseTable.end()
         ; ++it
@@ -159,7 +159,7 @@ void CompFinder::print_and_add_to_sql_result(const double myTime) const
      }
 }
 
-void CompFinder::add_clauses_to_component(const vector<ClOffset>& cs)
+void CompFinder::add_clauses_to_component(const cms_vector<ClOffset>& cs)
 {
     for (ClOffset offset: cs) {
         if (bogoprops_remain <= 0) {
@@ -174,7 +174,7 @@ void CompFinder::add_clauses_to_component(const vector<ClOffset>& cs)
 
 void CompFinder::addToCompImplicits()
 {
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
 
     for (size_t var = 0; var < solver->nVars(); var++) {
         if (bogoprops_remain <= 0) {
@@ -215,7 +215,7 @@ void CompFinder::addToCompImplicits()
 
         if (lits.size() > 1) {
             //Clear seen
-            for(vector<Lit>::const_iterator
+            for(cms_vector<Lit>::const_iterator
                 it = lits.begin(), end = lits.end()
                 ; it != end
                 ; ++it
@@ -270,7 +270,7 @@ void CompFinder::merge_newset_into_single_component()
 {
     const uint32_t into = tomerge[0];
     seen[into] = 0;
-    map<uint32_t, vector<uint32_t> >::iterator intoReverse
+    map<uint32_t, cms_vector<uint32_t> >::iterator intoReverse
         = reverseTable.find(into);
 
     //Put the new lits into this set
@@ -309,7 +309,7 @@ void CompFinder::add_clause_to_component(const T& cl)
 
         //Find in reverseTable
         bogoprops_remain -= (int64_t)reverseTable.size()*2;
-        map<uint32_t, vector<uint32_t> >::iterator it2 = reverseTable.find(merge);
+        map<uint32_t, cms_vector<uint32_t> >::iterator it2 = reverseTable.find(merge);
         assert(it2 != reverseTable.end());
 
         //Add them all

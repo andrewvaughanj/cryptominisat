@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef PARTFINDER_H
 #define PARTFINDER_H
 
-#include <vector>
+#include "cms_vector.h"
 #include <map>
 #include "constants.h"
 #include "solvertypes.h"
@@ -35,7 +35,6 @@ class Solver;
 class Clause;
 
 using std::map;
-using std::vector;
 using std::pair;
 
 class CompFinder {
@@ -45,15 +44,15 @@ class CompFinder {
         void find_components();
         bool getTimedOut() const;
 
-        const map<uint32_t, vector<uint32_t> >& getReverseTable() const; // comp->var
+        const map<uint32_t, cms_vector<uint32_t> >& getReverseTable() const; // comp->var
         uint32_t getVarComp(const uint32_t var) const;
-        const vector<uint32_t>& getTable() const; //var -> comp
-        const vector<uint32_t>& getCompVars(const uint32_t comp);
+        const cms_vector<uint32_t>& getTable() const; //var -> comp
+        const cms_vector<uint32_t>& getCompVars(const uint32_t comp);
         uint32_t getNumComps() const;
 
     private:
         void addToCompImplicits();
-        void add_clauses_to_component(const vector<ClOffset>& cs);
+        void add_clauses_to_component(const cms_vector<ClOffset>& cs);
         template<class T>
         void add_clause_to_component(const T& cl);
         template<class T>
@@ -77,25 +76,25 @@ class CompFinder {
         };
 
         //comp -> vars
-        map<uint32_t, vector<uint32_t> > reverseTable;
+        map<uint32_t, cms_vector<uint32_t> > reverseTable;
 
         //var -> comp
-        vector<uint32_t> table;
+        cms_vector<uint32_t> table;
 
         //The comp counter
         uint32_t comp_no;
         uint32_t used_comp_no;
 
         //Temporary
-        vector<uint32_t> newSet;
-        vector<uint32_t> tomerge;
+        cms_vector<uint32_t> newSet;
+        cms_vector<uint32_t> tomerge;
 
         //Keep track of time
         long long bogoprops_remain;
         long long orig_bogoprops;
         bool timedout;
 
-        vector<uint16_t>& seen;
+        cms_vector<uint16_t>& seen;
         Solver* solver;
 };
 
@@ -104,13 +103,13 @@ inline uint32_t CompFinder::getNumComps() const
     return reverseTable.size();
 }
 
-inline const map<uint32_t, vector<uint32_t> >& CompFinder::getReverseTable() const
+inline const map<uint32_t, cms_vector<uint32_t> >& CompFinder::getReverseTable() const
 {
     assert(!timedout);
     return reverseTable;
 }
 
-inline const vector<uint32_t>& CompFinder::getTable() const
+inline const cms_vector<uint32_t>& CompFinder::getTable() const
 {
     assert(!timedout);
     return table;
@@ -122,7 +121,7 @@ inline uint32_t CompFinder::getVarComp(const uint32_t var) const
     return table[var];
 }
 
-inline const vector<uint32_t>& CompFinder::getCompVars(const uint32_t comp)
+inline const cms_vector<uint32_t>& CompFinder::getCompVars(const uint32_t comp)
 {
     assert(!timedout);
     return reverseTable[comp];

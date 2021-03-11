@@ -24,8 +24,7 @@ THE SOFTWARE.
 #define __TOPLEVELABST_H__
 
 #include "xor.h"
-#include <vector>
-using std::vector;
+#include "cms_vector.h"
 
 namespace CMSat {
 
@@ -35,7 +34,7 @@ class Solver;
 class TopLevelGaussAbst
 {
     public:
-        virtual bool toplevelgauss(const vector<Xor>& /*_xors*/, vector<Lit>* /*out_changed_occur*/)
+        virtual bool toplevelgauss(const cms_vector<Xor>& /*_xors*/, cms_vector<Lit>* /*out_changed_occur*/)
         {
             return true;
         }

@@ -24,9 +24,8 @@ THE SOFTWARE.
 #include "solvertypes.h"
 #include "propby.h"
 
-#include <vector>
+#include "cms_vector.h"
 #include <deque>
-using std::vector;
 using std::deque;
 
 namespace CMSat {
@@ -82,11 +81,11 @@ private:
     void do_one();
     void tree_look();
 
-    vector<Lit> roots;
-    vector<Lit> failed;
-    vector<ResetReason> reset_reason_stack;
+    cms_vector<Lit> roots;
+    cms_vector<Lit> failed;
+    cms_vector<ResetReason> reset_reason_stack;
     deque<QueueElem> queue;
-    vector<char> depth_failed;
+    cms_vector<char> depth_failed;
     int64_t bogoprops_to_use;
     int64_t bogoprops_remain;
 
@@ -96,7 +95,7 @@ private:
     size_t numCalls = 0;
 
     Solver* solver;
-    vector<uint16_t>& seen;
+    cms_vector<uint16_t>& seen;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const InTree::QueueElem& elem)

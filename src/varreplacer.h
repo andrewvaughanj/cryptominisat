@@ -24,7 +24,7 @@ THE SOFTWARE.
 #define VARREPLACER_H
 
 #include <map>
-#include <vector>
+#include "cms_vector.h"
 #include <utility>
 
 #include "constants.h"
@@ -39,7 +39,6 @@ namespace CMSat {
 //#define VERBOSE_DEBUG
 
 using std::map;
-using std::vector;
 class Solver;
 class SCCFinder;
 
@@ -62,7 +61,7 @@ class VarReplacer
         void extend_model_already_set();
         void extend_model_set_undef();
         void extend_model(const uint32_t var);
-        void extend_pop_queue(vector<Lit>& pop);
+        void extend_pop_queue(cms_vector<Lit>& pop);
 
         uint32_t get_var_replaced_with(const uint32_t var) const;
         uint32_t get_var_replaced_with(const Lit lit) const;
@@ -71,10 +70,10 @@ class VarReplacer
         uint32_t get_var_replaced_with_outer(uint32_t var) const;
         bool var_is_replacing(const uint32_t var);
 
-        vector<uint32_t> get_vars_replacing(uint32_t var) const;
+        cms_vector<uint32_t> get_vars_replacing(uint32_t var) const;
         void updateVars(
-            const vector<uint32_t>& outerToInter
-            , const vector<uint32_t>& interToOuter
+            const cms_vector<uint32_t>& outerToInter
+            , const cms_vector<uint32_t>& interToOuter
         );
 
         //Stats
@@ -103,8 +102,8 @@ class VarReplacer
         };
         const Stats& get_stats() const;
         size_t mem_used() const;
-        vector<std::pair<Lit, Lit> > get_all_binary_xors_outer() const;
-        vector<uint32_t> get_vars_replacing_others() const;
+        cms_vector<std::pair<Lit, Lit> > get_all_binary_xors_outer() const;
+        cms_vector<uint32_t> get_vars_replacing_others() const;
         bool get_scc_depth_warning_triggered() const;
 
         void save_state(SimpleOutFile& f) const;
@@ -113,10 +112,10 @@ class VarReplacer
     private:
         Solver* solver;
         SCCFinder* scc_finder;
-        vector<Clause*> delayed_attach_or_free;
+        cms_vector<Clause*> delayed_attach_or_free;
 
         void check_no_replaced_var_set() const;
-        vector<Lit> fast_inter_replace_lookup;
+        cms_vector<Lit> fast_inter_replace_lookup;
         void build_fast_inter_replace_lookup();
         void destroy_fast_inter_replace_lookup();
         Lit get_lit_replaced_with_fast(const Lit lit) const {
@@ -125,9 +124,9 @@ class VarReplacer
         uint32_t get_var_replaced_with_fast(const uint32_t var) const {
             return fast_inter_replace_lookup[var].var();
         }
-        bool replace_xor_clauses(vector<Xor>& xors);
+        bool replace_xor_clauses(cms_vector<Xor>& xors);
 
-        vector<Lit> ps_tmp;
+        cms_vector<Lit> ps_tmp;
         bool perform_replace();
         bool add_xor_as_bins(const BinaryXor& bin_xor);
         bool replace(
@@ -145,7 +144,7 @@ class VarReplacer
         void set_sub_var_during_solution_extension(uint32_t var, uint32_t sub_var);
         void checkUnsetSanity();
 
-        bool replace_set(vector<ClOffset>& cs);
+        bool replace_set(cms_vector<ClOffset>& cs);
         void attach_delayed_attach();
         void update_all_vardata_activities();
         void update_vardata_and_activities(
@@ -171,7 +170,7 @@ class VarReplacer
         );
 
         //Temporary used in replaceImplicit
-        vector<BinaryClause> delayed_attach_bin;
+        cms_vector<BinaryClause> delayed_attach_bin;
         bool replaceImplicit();
         struct ImplicitTmpStats
         {
@@ -216,7 +215,7 @@ class VarReplacer
         bool handleUpdatedClause(Clause& c, const Lit origLit1, const Lit origLit2);
 
          //While replacing the implicit clauses we cannot enqeue
-        vector<Lit> delayedEnqueue;
+        cms_vector<Lit> delayedEnqueue;
         bool update_table_and_reversetable(const Lit lit1, const Lit lit2);
         void setAllThatPointsHereTo(const uint32_t var, const Lit lit);
 
@@ -228,11 +227,11 @@ class VarReplacer
         //Everything is OUTER here.
         //Index by: table[VAR] -> tells us what literal
         //          Lit(VAR, false) has been replaced with.
-        vector<Lit> table;
+        cms_vector<Lit> table;
 
         ///mapping of variable to set of variables it replaces
         //Everything is OUTER here.
-        map<uint32_t, vector<uint32_t> > reverseTable;
+        map<uint32_t, cms_vector<uint32_t> > reverseTable;
 
         //Stats
         void printReplaceStats() const;
@@ -277,9 +276,9 @@ inline size_t VarReplacer::getNumTrees() const
     return reverseTable.size();
 }
 
-inline vector<uint32_t> VarReplacer::get_vars_replacing_others() const
+inline cms_vector<uint32_t> VarReplacer::get_vars_replacing_others() const
 {
-    vector<uint32_t> replacingVars;
+    cms_vector<uint32_t> replacingVars;
     for(const auto& it: reverseTable) {
         replacingVars.push_back(it.first);
     }

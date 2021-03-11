@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <limits>
 #include <string>
 #include <algorithm>
-#include <vector>
+#include "cms_vector.h"
 #include <complex>
 #include <locale>
 
@@ -187,7 +187,7 @@ void Solver::set_shared_data(SharedData* shared_data)
 }
 
 bool Solver::add_xor_clause_inter(
-    const vector<Lit>& lits
+    const cms_vector<Lit>& lits
     , bool rhs
     , const bool attach
     , bool addDrat
@@ -196,7 +196,7 @@ bool Solver::add_xor_clause_inter(
     assert(!attach || qhead == trail.size());
     assert(decisionLevel() == 0);
 
-    vector<Lit> ps(lits);
+    cms_vector<Lit> ps(lits);
     for(Lit& lit: ps) {
         if (lit.sign()) {
             rhs ^= true;
@@ -238,7 +238,7 @@ bool Solver::add_xor_clause_inter(
 }
 
 void Solver::add_every_combination_xor(
-    const vector<Lit>& lits
+    const cms_vector<Lit>& lits
     , const bool attach
     , const bool addDrat
 ) {
@@ -246,7 +246,7 @@ void Solver::add_every_combination_xor(
 
     size_t at = 0;
     size_t num = 0;
-    vector<Lit> xorlits;
+    cms_vector<Lit> xorlits;
     tmp_xor_clash_vars.clear();
     Lit lastlit_added = lit_Undef;
     while(at != lits.size()) {
@@ -288,12 +288,12 @@ void Solver::add_every_combination_xor(
 }
 
 void Solver::add_xor_clause_inter_cleaned_cut(
-    const vector<Lit>& lits
+    const cms_vector<Lit>& lits
     , const bool attach
     , const bool addDrat
 ) {
     //cout << "xor_inter_cleaned_cut got: " << lits << endl;
-    vector<Lit> new_lits;
+    cms_vector<Lit> new_lits;
     for(size_t i = 0; i < (1ULL<<lits.size()); i++) {
         unsigned bits_set = num_bits_set(i, lits.size());
         if (bits_set % 2 == 0) {
@@ -332,8 +332,8 @@ unsigned Solver::num_bits_set(const size_t x, const unsigned max_size) const
 
 
 bool Solver::sort_and_clean_clause(
-    vector<Lit>& ps
-    , const vector<Lit>& origCl
+    cms_vector<Lit>& ps
+    , const cms_vector<Lit>& origCl
     , const bool red
     , const bool sorted
 ) {
@@ -386,11 +386,11 @@ when the wer are in an UNSAT (!ok) state, for example. Use it carefully,
 and only internally
 */
 Clause* Solver::add_clause_int(
-    const vector<Lit>& lits
+    const cms_vector<Lit>& lits
     , const bool red
     , ClauseStats cl_stats
     , const bool attach_long
-    , vector<Lit>* finalLits
+    , cms_vector<Lit>* finalLits
     , bool addDrat
     , const Lit drat_first
     , const bool sorted
@@ -413,7 +413,7 @@ Clause* Solver::add_clause_int(
     #endif
 
     add_clause_int_tmp_cl = lits;
-    vector<Lit>& ps = add_clause_int_tmp_cl;
+    cms_vector<Lit>& ps = add_clause_int_tmp_cl;
     if (!sort_and_clean_clause(ps, lits, red, sorted)) {
         if (finalLits) {
             finalLits->clear();
@@ -583,7 +583,7 @@ void Solver::detach_modified_clause(
     PropEngine::detach_modified_clause(lit1, lit2, address);
 }
 
-bool Solver::addClauseHelper(vector<Lit>& ps)
+bool Solver::addClauseHelper(cms_vector<Lit>& ps)
 {
     //If already UNSAT, just return
     if (!ok)
@@ -696,13 +696,13 @@ bool Solver::addClauseHelper(vector<Lit>& ps)
     return true;
 }
 
-bool Solver::addClause(const vector<Lit>& lits, bool red)
+bool Solver::addClause(const cms_vector<Lit>& lits, bool red)
 {
-    vector<Lit> ps = lits;
+    cms_vector<Lit> ps = lits;
     return Solver::addClauseInt(ps, red);
 }
 
-bool Solver::addClauseInt(vector<Lit>& ps, bool red)
+bool Solver::addClauseInt(cms_vector<Lit>& ps, bool red)
 {
     if (conf.perform_occur_based_simp && occsimplifier->getAnythingHasBeenBlocked()) {
         std::cerr
@@ -723,7 +723,7 @@ bool Solver::addClauseInt(vector<Lit>& ps, bool red)
 
     std::sort(ps.begin(), ps.end());
 
-    vector<Lit> *pFinalCl = NULL;
+    cms_vector<Lit> *pFinalCl = NULL;
     if (drat->enabled() || conf.simulate_drat) {
         finalCl_tmp.clear();
         pFinalCl = &finalCl_tmp;
@@ -826,7 +826,7 @@ void Solver::test_renumbering() const
     assert(!problem && "We renumbered the variables in the wrong order!");
 }
 
-void Solver::renumber_clauses(const vector<uint32_t>& outerToInter)
+void Solver::renumber_clauses(const cms_vector<uint32_t>& outerToInter)
 {
     //Clauses' abstractions have to be re-calculated
     for(ClOffset offs: longIrredCls) {
@@ -865,11 +865,11 @@ void Solver::renumber_clauses(const vector<uint32_t>& outerToInter)
 }
 
 size_t Solver::calculate_interToOuter_and_outerToInter(
-    vector<uint32_t>& outerToInter
-    , vector<uint32_t>& interToOuter
+    cms_vector<uint32_t>& outerToInter
+    , cms_vector<uint32_t>& interToOuter
 ) {
     size_t at = 0;
-    vector<uint32_t> useless;
+    cms_vector<uint32_t> useless;
     size_t numEffectiveVars = 0;
     for(size_t i = 0; i < nVars(); i++) {
         if (value(i) != l_Undef
@@ -888,7 +888,7 @@ size_t Solver::calculate_interToOuter_and_outerToInter(
     }
 
     //Fill the rest with variables that have been removed/eliminated/set
-    for(vector<uint32_t>::const_iterator
+    for(cms_vector<uint32_t>::const_iterator
         it = useless.begin(), end = useless.end()
         ; it != end
         ; ++it
@@ -925,7 +925,7 @@ double Solver::calc_renumber_saving()
     return saving;
 }
 
-bool Solver::update_vars_of_xors(vector<Xor>& xors)
+bool Solver::update_vars_of_xors(cms_vector<Xor>& xors)
 {
     for(Xor& x: xors) {
         clean_xor_vars_no_prop(x.get_vars(), x.rhs);
@@ -1030,14 +1030,14 @@ bool Solver::renumber_variables(bool must_renumber)
     }
 
     //outerToInter[10] = 0 ---> what was 10 is now 0.
-    vector<uint32_t> outerToInter(nVarsOuter());
-    vector<uint32_t> interToOuter(nVarsOuter());
+    cms_vector<uint32_t> outerToInter(nVarsOuter());
+    cms_vector<uint32_t> interToOuter(nVarsOuter());
 
     size_t numEffectiveVars =
         calculate_interToOuter_and_outerToInter(outerToInter, interToOuter);
 
     //Create temporary outerToInter2
-    vector<uint32_t> interToOuter2(nVarsOuter()*2);
+    cms_vector<uint32_t> interToOuter2(nVarsOuter()*2);
     for(size_t i = 0; i < nVarsOuter(); i++) {
         interToOuter2[i*2] = interToOuter[i]*2;
         interToOuter2[i*2+1] = interToOuter[i]*2+1;
@@ -1569,7 +1569,7 @@ lbool Solver::simplify_problem_outside()
 }
 
 lbool Solver::solve_with_assumptions(
-    const vector<Lit>* _assumptions,
+    const cms_vector<Lit>* _assumptions,
     const bool only_sampling_solution
 ) {
     longest_trail_ever = 0; //reset: probably new clauses, changed assumptions
@@ -2705,7 +2705,7 @@ void Solver::print_clause_size_distrib()
     size_t size4 = 0;
     size_t size5 = 0;
     size_t sizeLarge = 0;
-    for(vector<ClOffset>::const_iterator
+    for(cms_vector<ClOffset>::const_iterator
         it = longIrredCls.begin(), end = longIrredCls.end()
         ; it != end
         ; ++it
@@ -2741,10 +2741,10 @@ void Solver::print_clause_size_distrib()
 }
 
 
-vector<Lit> Solver::get_zero_assigned_lits(const bool backnumber,
+cms_vector<Lit> Solver::get_zero_assigned_lits(const bool backnumber,
                                            const bool only_nvars) const
 {
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
     assert(decisionLevel() == 0);
     size_t until;
     if (only_nvars) {
@@ -2768,7 +2768,7 @@ vector<Lit> Solver::get_zero_assigned_lits(const bool backnumber,
             }
 
             //Everything it repaces has also been set
-            const vector<uint32_t> vars = varReplacer->get_vars_replacing(lit.var());
+            const cms_vector<uint32_t> vars = varReplacer->get_vars_replacing(lit.var());
             for(const uint32_t var: vars) {
                 if (varData[var].is_bva)
                     continue;
@@ -2792,12 +2792,12 @@ vector<Lit> Solver::get_zero_assigned_lits(const bool backnumber,
     //Remove duplicates. Because of above replacing-mimicing algo
     //multipe occurrences of literals can be inside
     std::sort(lits.begin(), lits.end());
-    vector<Lit>::iterator it = std::unique (lits.begin(), lits.end());
+    cms_vector<Lit>::iterator it = std::unique (lits.begin(), lits.end());
     lits.resize( std::distance(lits.begin(),it) );
 
     //Update to outer without BVA
     if (backnumber) {
-        vector<uint32_t> my_map = build_outer_to_without_bva_map();
+        cms_vector<uint32_t> my_map = build_outer_to_without_bva_map();
         updateLitsMap(lits, my_map);
         for(const Lit lit: lits) {
             assert(lit.var() < nVarsOutside());
@@ -2842,7 +2842,7 @@ bool Solver::verify_model_implicit_clauses() const
     return true;
 }
 
-bool Solver::verify_model_long_clauses(const vector<ClOffset>& cs) const
+bool Solver::verify_model_long_clauses(const cms_vector<ClOffset>& cs) const
 {
     #ifdef VERBOSE_DEBUG
     cout << "Checking clauses whether they have been properly satisfied." << endl;
@@ -2850,7 +2850,7 @@ bool Solver::verify_model_long_clauses(const vector<ClOffset>& cs) const
 
     bool verificationOK = true;
 
-    for (vector<ClOffset>::const_iterator
+    for (cms_vector<ClOffset>::const_iterator
         it = cs.begin(), end = cs.end()
         ; it != end
         ; ++it
@@ -3077,7 +3077,7 @@ void Solver::free_unused_watches()
     }
 }
 
-bool Solver::fully_enqueue_these(const vector<Lit>& toEnqueue)
+bool Solver::fully_enqueue_these(const cms_vector<Lit>& toEnqueue)
 {
     assert(ok);
     assert(decisionLevel() == 0);
@@ -3125,7 +3125,7 @@ void Solver::add_in_partial_solving_stats()
     sumPropStats += propStats;
 }
 
-bool Solver::add_clause_outer(const vector<Lit>& lits, bool red)
+bool Solver::add_clause_outer(const cms_vector<Lit>& lits, bool red)
 {
     if (!ok) {
         return false;
@@ -3137,13 +3137,13 @@ bool Solver::add_clause_outer(const vector<Lit>& lits, bool red)
     return addClauseInt(back_number_from_outside_to_outer_tmp, red);
 }
 
-bool Solver::add_xor_clause_outer(const vector<uint32_t>& vars, bool rhs)
+bool Solver::add_xor_clause_outer(const cms_vector<uint32_t>& vars, bool rhs)
 {
     if (!ok) {
         return false;
     }
 
-    vector<Lit> lits(vars.size());
+    cms_vector<Lit> lits(vars.size());
     for(size_t i = 0; i < vars.size(); i++) {
         lits[i] = Lit(vars[i], false);
     }
@@ -3158,7 +3158,7 @@ bool Solver::add_xor_clause_outer(const vector<uint32_t>& vars, bool rhs)
     return ok;
 }
 
-void Solver::check_too_large_variable_number(const vector<Lit>& lits) const
+void Solver::check_too_large_variable_number(const cms_vector<Lit>& lits) const
 {
     for (const Lit lit: lits) {
         if (lit.var() >= nVarsOutside()) {
@@ -3187,13 +3187,13 @@ void Solver::bva_changed()
     datasync->rebuild_bva_map();
 }
 
-vector<pair<Lit, Lit> > Solver::get_all_binary_xors() const
+cms_vector<pair<Lit, Lit> > Solver::get_all_binary_xors() const
 {
-    vector<pair<Lit, Lit> > bin_xors = varReplacer->get_all_binary_xors_outer();
+    cms_vector<pair<Lit, Lit> > bin_xors = varReplacer->get_all_binary_xors_outer();
 
     //Update to outer without BVA
-    vector<pair<Lit, Lit> > ret;
-    const vector<uint32_t> my_map = build_outer_to_without_bva_map();
+    cms_vector<pair<Lit, Lit> > ret;
+    const cms_vector<uint32_t> my_map = build_outer_to_without_bva_map();
     for(std::pair<Lit, Lit> p: bin_xors) {
         if (p.first.var() < my_map.size()
             && p.second.var() < my_map.size()
@@ -3784,10 +3784,10 @@ void Solver::add_sql_tag(const string& name, const string& val)
     }
 }
 
-vector<Lit> Solver::get_toplevel_units_internal(bool outer_numbering) const
+cms_vector<Lit> Solver::get_toplevel_units_internal(bool outer_numbering) const
 {
     assert(!outer_numbering);
-    vector<Lit> units;
+    cms_vector<Lit> units;
     for(size_t i = 0; i < nVars(); i++) {
         if (value(i) != l_Undef) {
             Lit l = Lit(i, value(i) == l_False);
@@ -3822,9 +3822,9 @@ void Solver::open_file_and_dump_red_clauses(const std::string &fname) const
     dumper.open_file_and_dump_red_clauses(fname);
 }
 
-vector<Xor> Solver::get_recovered_xors(const bool xor_together_xors)
+cms_vector<Xor> Solver::get_recovered_xors(const bool xor_together_xors)
 {
-    vector<Xor> xors_ret;
+    cms_vector<Xor> xors_ret;
     if (xor_together_xors && okay()) {
         auto xors = xorclauses;
 
@@ -3838,9 +3838,9 @@ vector<Xor> Solver::get_recovered_xors(const bool xor_together_xors)
     }
 }
 
-void Solver::renumber_xors_to_outside(const vector<Xor>& xors, vector<Xor>& xors_ret)
+void Solver::renumber_xors_to_outside(const cms_vector<Xor>& xors, cms_vector<Xor>& xors_ret)
 {
-    const vector<uint32_t> outer_to_without_bva_map = build_outer_to_without_bva_map();
+    const cms_vector<uint32_t> outer_to_without_bva_map = build_outer_to_without_bva_map();
 
     if (conf.verbosity >= 5) {
         cout << "XORs before outside numbering:" << endl;
@@ -3861,11 +3861,11 @@ void Solver::renumber_xors_to_outside(const vector<Xor>& xors, vector<Xor>& xors
             continue;
         }
 
-        vector<uint32_t> t = xor_outer_numbered(x.get_vars());
+        cms_vector<uint32_t> t = xor_outer_numbered(x.get_vars());
         for(auto& v: t) {
             v = outer_to_without_bva_map[v];
         }
-        xors_ret.push_back(Xor(t, x.rhs, vector<uint32_t>()));
+        xors_ret.push_back(Xor(t, x.rhs, cms_vector<uint32_t>()));
     }
 }
 
@@ -4052,7 +4052,7 @@ void Solver::start_getting_small_clauses(const uint32_t max_len, const uint32_t 
     learnt_clause_query_outer_to_without_bva_map = build_outer_to_without_bva_map();
 }
 
-bool Solver::get_next_small_clause(vector<Lit>& out)
+bool Solver::get_next_small_clause(cms_vector<Lit>& out)
 {
     assert(ok);
 
@@ -4127,7 +4127,7 @@ void Solver::end_getting_small_clauses()
     learnt_clause_query_outer_to_without_bva_map.shrink_to_fit();
 }
 
-bool Solver::all_vars_outside(const vector<Lit>& cl) const
+bool Solver::all_vars_outside(const cms_vector<Lit>& cl) const
 {
     for(const auto& l: cl) {
         if (varData[map_outer_to_inter(l.var())].is_bva)
@@ -4136,7 +4136,7 @@ bool Solver::all_vars_outside(const vector<Lit>& cl) const
     return true;
 }
 
-void Solver::learnt_clausee_query_map_without_bva(vector<Lit>& cl)
+void Solver::learnt_clausee_query_map_without_bva(cms_vector<Lit>& cl)
 {
     for(auto& l: cl) {
         l = Lit(learnt_clause_query_outer_to_without_bva_map[l.var()], l.sign());
@@ -4232,12 +4232,12 @@ const Lit, const double
     #endif
 }
 
-vector<ActAndOffset> Solver::get_vsids_scores() const
+cms_vector<ActAndOffset> Solver::get_vsids_scores() const
 {
     auto scores(var_act_vsids);
 
     //Map to outer
-    vector<ActAndOffset> scores_outer(nVarsOuter(), ActAndOffset());
+    cms_vector<ActAndOffset> scores_outer(nVarsOuter(), ActAndOffset());
     for(uint32_t i = 0; i < scores.size(); i ++) {
         uint32_t outer = map_inter_to_outer(i);
         scores_outer[outer] = scores[i];
@@ -4250,8 +4250,8 @@ vector<ActAndOffset> Solver::get_vsids_scores() const
     return scores_outer;
 }
 
-bool Solver::implied_by(const std::vector<Lit>& lits,
-                                  std::vector<Lit>& out_implied)
+bool Solver::implied_by(const cms_vector<Lit>& lits,
+                                  cms_vector<Lit>& out_implied)
 {
     if (get_num_bva_vars() != 0) {
         cout << "ERROR: get_num_bva_vars(): " << get_num_bva_vars() << endl;
@@ -4377,7 +4377,7 @@ void Solver::detach_xor_clauses(
     ///////////////
     uint32_t detached = 0;
     uint32_t deleted = 0;
-    vector<ClOffset> delayed_clause_free;
+    cms_vector<ClOffset> delayed_clause_free;
     for(uint32_t x = 0; x < nVars()*2; x++) {
         Lit l = Lit::toLit(x);
         uint32_t j = 0;
@@ -4608,9 +4608,9 @@ bool Solver::fully_undo_xor_detach()
     return okay();
 }
 
-void Solver::unset_clash_decision_vars(const vector<Xor>& xors)
+void Solver::unset_clash_decision_vars(const cms_vector<Xor>& xors)
 {
-    vector<uint32_t> clash_vars;
+    cms_vector<uint32_t> clash_vars;
     for(const auto& x: xors) {
         for(const auto& v: x.clash_vars) {
             if (!seen[v]) {

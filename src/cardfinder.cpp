@@ -46,7 +46,7 @@ CardFinder::CardFinder(Solver* _solver) :
 //TODO order encoding!
 //Also, convert to order encoding.
 
-std::string CardFinder::print_card(const vector<Lit>& lits) const {
+std::string CardFinder::print_card(const cms_vector<Lit>& lits) const {
     std::stringstream ss;
     for(size_t i = 0; i < lits.size(); i++) {
         ss << lits[i];
@@ -78,7 +78,7 @@ bool CardFinder::find_connector(Lit lit1, Lit lit2) const
     return false;
 }
 
-void CardFinder::get_vars_with_clash(const vector<Lit>& lits, vector<uint32_t>& clash) const {
+void CardFinder::get_vars_with_clash(const cms_vector<Lit>& lits, cms_vector<uint32_t>& clash) const {
     Lit last_lit = lit_Undef;
     for(const Lit x: lits) {
         if (x == ~last_lit) {
@@ -93,9 +93,9 @@ void CardFinder::get_vars_with_clash(const vector<Lit>& lits, vector<uint32_t>& 
 //Sect. 3.3 -- two-product encoding
 //
 void CardFinder::find_two_product_atmost1() {
-    vector<vector<Lit>> new_cards;
+    cms_vector<cms_vector<Lit>> new_cards;
     for(size_t at_row = 0; at_row < cards.size(); at_row++) {
-        vector<Lit>& card_row = cards[at_row];
+        cms_vector<Lit>& card_row = cards[at_row];
         seen2[at_row] = 1;
         if (card_row.empty()) {
             continue;
@@ -131,7 +131,7 @@ void CardFinder::find_two_product_atmost1() {
                             //don't do reverse too
                             continue;
                         }
-                        vector<Lit>& card_col = cards[at_col];
+                        cms_vector<Lit>& card_col = cards[at_col];
                         if (card_col.empty()) continue;
 
                         /*cout << "c [cardfind] Potential card for"
@@ -139,7 +139,7 @@ void CardFinder::find_two_product_atmost1() {
                         << " -- col: " << print_card(card_col)
                         << endl;*/
 
-                        vector<Lit> card;
+                        cms_vector<Lit> card;
 
                         //mark all lits in row's bin-connected graph
                         for(const Lit row: card_row) {
@@ -197,17 +197,17 @@ void CardFinder::find_two_product_atmost1() {
     }
 }
 
-void CardFinder::print_cards(const vector<vector<Lit>>& card_constraints) const {
+void CardFinder::print_cards(const cms_vector<cms_vector<Lit>>& card_constraints) const {
     for(const auto& card: card_constraints) {
         cout << "c [cardfind] final: " << print_card(card) << endl;
     }
 }
 
 
-void CardFinder::deal_with_clash(vector<uint32_t>& clash) {
+void CardFinder::deal_with_clash(cms_vector<uint32_t>& clash) {
 
-    vector<uint32_t> idx_pos;
-    vector<uint32_t> idx_neg;
+    cms_vector<uint32_t> idx_pos;
+    cms_vector<uint32_t> idx_neg;
 
     for(uint32_t var: clash) {
         Lit lit = Lit(var, false);
@@ -242,7 +242,7 @@ void CardFinder::deal_with_clash(vector<uint32_t>& clash) {
                     continue;
                 }
 
-                vector<Lit> new_card;
+                cms_vector<Lit> new_card;
                 bool found = false;
                 for(Lit l: cards[pos]) {
                     if (l == lit) {
@@ -308,7 +308,7 @@ void CardFinder::find_pairwise_atmost1()
     assert(toClear.size() == 0);
     for (uint32_t i = 0; i < solver->nVars()*2; i++) {
         const Lit l = Lit::toLit(i);
-        vector<Lit> lits_in_card;
+        cms_vector<Lit> lits_in_card;
         if (seen[l.toInt()]) {
             //cout << "Skipping " << l << " we have seen it before" << endl;
             continue;
@@ -368,7 +368,7 @@ void CardFinder::find_pairwise_atmost1()
     //See sect. 3.2 of same paper
     //
     std::sort(toClear.begin(), toClear.end());
-    vector<uint32_t> vars_with_clash;
+    cms_vector<uint32_t> vars_with_clash;
     get_vars_with_clash(toClear, vars_with_clash);
     deal_with_clash(vars_with_clash);
     for(const Lit x: toClear) {

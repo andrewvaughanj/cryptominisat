@@ -24,7 +24,7 @@ THE SOFTWARE.
 #define SOLVERCONF_H
 
 #include <string>
-#include <vector>
+#include "cms_vector.h"
 #include <cstdlib>
 #include <cassert>
 #include "constants.h"
@@ -496,7 +496,7 @@ class DLL_PUBLIC SolverConf
         bool force_use_all_matrixes;
 
         //Sampling
-        std::vector<uint32_t>* sampling_vars;
+        cms_vector<uint32_t>* sampling_vars;
 
         //Timeouts
         double orig_global_timeout_multiplier;

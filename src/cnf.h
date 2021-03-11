@@ -86,11 +86,11 @@ class CNF
 {
 public:
     void save_on_var_memory();
-    void updateWatch(watch_subarray ws, const vector<uint32_t>& outerToInter);
+    void updateWatch(watch_subarray ws, const cms_vector<uint32_t>& outerToInter);
     void updateVars(
-        const vector<uint32_t>& outerToInter
-        , const vector<uint32_t>& interToOuter
-        , const vector<uint32_t>& interToOuter2
+        const cms_vector<uint32_t>& outerToInter
+        , const cms_vector<uint32_t>& interToOuter
+        , const cms_vector<uint32_t>& interToOuter2
     );
     size_t mem_used_renumberer() const;
     size_t mem_used() const;
@@ -123,14 +123,14 @@ public:
     bool all_matrices_disabled = false;
     #endif
     uint32_t num_sls_called = 0;
-    vector<VarData> varData;
+    cms_vector<VarData> varData;
     branch branch_strategy = branch::vsids;
     string branch_strategy_str = "VSIDSX";
     string branch_strategy_str_short = "vsx";
     PolarityMode polarity_mode = PolarityMode::polarmode_automatic; //current polarity mode
     uint32_t polar_stable_longest_trail_this_iter = 0;
     uint32_t longest_trail_ever = 0;
-    vector<uint32_t> depth; //for ancestors in intree probing
+    cms_vector<uint32_t> depth; //for ancestors in intree probing
     uint32_t minNumVars = 0;
 
     uint64_t sumConflicts = 0;
@@ -154,14 +154,14 @@ public:
     //once, in case one has been replaced with the other. So if var 1 =  var 2
     //and var 1 was set to TRUE and var 2 to be FALSE, then we'll have var 1
     //insided this array twice, once it needs to be set to TRUE and once FALSE
-    vector<AssumptionPair> assumptions;
+    cms_vector<AssumptionPair> assumptions;
 
     //drat
     Drat* drat;
     void add_drat(std::ostream* os, bool add_ID);
 
     //Clauses
-    vector<ClOffset> longIrredCls;
+    cms_vector<ClOffset> longIrredCls;
 
     //if the solver object only saw add_clause and new_var(s)
     bool fresh_solver = true;
@@ -171,11 +171,11 @@ public:
     level 1 = check rarely
     level 2 = check often
     **/
-    vector<vector<ClOffset> > longRedCls;
-    vector<ClOffset> detached_xor_repr_cls; //these are still in longIrredCls
-    vector<Xor> xorclauses;
-    vector<Xor> xorclauses_unused;
-    vector<uint32_t> removed_xorclauses_clash_vars;
+    cms_vector<cms_vector<ClOffset> > longRedCls;
+    cms_vector<ClOffset> detached_xor_repr_cls; //these are still in longIrredCls
+    cms_vector<Xor> xorclauses;
+    cms_vector<Xor> xorclauses_unused;
+    cms_vector<uint32_t> removed_xorclauses_clash_vars;
     bool detached_xor_clauses = false;
     bool xor_clauses_updated = false;
     BinTriStats binTri;
@@ -184,10 +184,10 @@ public:
     int64_t restartID = 1;
 
     //Temporaries
-    vector<uint16_t> seen;
-    vector<uint8_t> seen2;
-    vector<uint64_t> permDiff;
-    vector<Lit>      toClear;
+    cms_vector<uint16_t> seen;
+    cms_vector<uint8_t> seen2;
+    cms_vector<uint64_t> permDiff;
+    cms_vector<Lit>      toClear;
     uint64_t MYFLAG = 1;
 
     bool okay() const
@@ -266,11 +266,11 @@ public:
     {
         return Lit(outerToInterMain[outer.var()], outer.sign());
     }
-    void map_inter_to_outer(vector<Lit>& lits) const
+    void map_inter_to_outer(cms_vector<Lit>& lits) const
     {
         updateLitsMap(lits, interToOuterMain);
     }
-    void renumber_outer_to_inter_lits(vector<Lit>& ps) const;
+    void renumber_outer_to_inter_lits(cms_vector<Lit>& ps) const;
 
     uint32_t nVarsOutside() const
     {
@@ -304,10 +304,10 @@ public:
     {
         return num_bva_vars;
     }
-    vector<uint32_t> get_outside_var_incidence();
-    vector<uint32_t> get_outside_var_incidence_also_red();
+    cms_vector<uint32_t> get_outside_var_incidence();
+    cms_vector<uint32_t> get_outside_var_incidence_also_red();
 
-    vector<uint32_t> build_outer_to_without_bva_map() const;
+    cms_vector<uint32_t> build_outer_to_without_bva_map() const;
     void clean_occur_from_removed_clauses();
     void clean_occur_from_removed_clauses_only_smudged();
     void clean_occur_from_idx_types_only_smudged();
@@ -317,10 +317,10 @@ public:
     void check_no_removed_or_freed_cl_in_watch() const;
     bool normClauseIsAttached(const ClOffset offset) const;
     void find_all_attach() const;
-    void find_all_attach(const vector<ClOffset>& cs) const;
+    void find_all_attach(const cms_vector<ClOffset>& cs) const;
     bool find_clause(const ClOffset offset) const;
     void test_all_clause_attached() const;
-    void test_all_clause_attached(const vector<ClOffset>& offsets) const;
+    void test_all_clause_attached(const cms_vector<ClOffset>& offsets) const;
     void check_wrong_attach() const;
     void check_watchlist(watch_subarray_const ws) const;
     template<class T>
@@ -331,7 +331,7 @@ public:
     template<class T> void clean_xor_no_prop(T& ps, bool& rhs);
     template<class T> void clean_xor_vars_no_prop(T& ps, bool& rhs);
     uint64_t count_lits(
-        const vector<ClOffset>& clause_array
+        const cms_vector<ClOffset>& clause_array
         , const bool red
         , const bool allowFreed
     ) const;
@@ -342,13 +342,13 @@ protected:
     void test_reflectivity_of_renumbering() const;
 
     template<class T>
-    vector<T> map_back_vars_to_without_bva(const vector<T>& val) const;
-    vector<lbool> assigns;
+    cms_vector<T> map_back_vars_to_without_bva(const cms_vector<T>& val) const;
+    cms_vector<lbool> assigns;
 
     void save_state(SimpleOutFile& f) const;
     void load_state(SimpleInFile& f);
-    vector<uint32_t> outerToInterMain;
-    vector<uint32_t> interToOuterMain;
+    cms_vector<uint32_t> outerToInterMain;
+    cms_vector<uint32_t> interToOuterMain;
 
 private:
     std::atomic<bool> *must_interrupt_inter; ///<Interrupt cleanly ASAP if true
@@ -357,7 +357,7 @@ private:
     void swapVars(const uint32_t which, const int off_by = 0);
 
     size_t num_bva_vars = 0;
-    vector<uint32_t> outer_to_with_bva_map;
+    cms_vector<uint32_t> outer_to_with_bva_map;
 };
 
 template<class Function>
@@ -523,7 +523,7 @@ inline void CNF::unmark_all_red1_clauses()
     }
 }
 
-inline void CNF::renumber_outer_to_inter_lits(vector<Lit>& ps) const
+inline void CNF::renumber_outer_to_inter_lits(cms_vector<Lit>& ps) const
 {
     for (Lit& lit: ps) {
         const Lit origLit = lit;
@@ -544,9 +544,9 @@ inline void CNF::renumber_outer_to_inter_lits(vector<Lit>& ps) const
 }
 
 template<typename T>
-inline vector<Lit> unsign_lits(const T& lits)
+inline cms_vector<Lit> unsign_lits(const T& lits)
 {
-    vector<Lit> ret(lits.size());
+    cms_vector<Lit> ret(lits.size());
     for(size_t i = 0; i < lits.size(); i++) {
         ret[i] = lits[i].unsign();
     }
@@ -583,7 +583,7 @@ bool CNF::satisfied_cl(const T& cl) const {
 template<typename T>
 bool CNF::no_duplicate_lits(const T& lits) const
 {
-    vector<Lit> x(lits.size());
+    cms_vector<Lit> x(lits.size());
     for(size_t i = 0; i < x.size(); i++) {
         x[i] = lits[i];
     }
@@ -672,9 +672,9 @@ void CNF::clean_xor_vars_no_prop(T& ps, bool& rhs)
 }
 
 template<class T>
-vector<T> CNF::map_back_vars_to_without_bva(const vector<T>& val) const
+cms_vector<T> CNF::map_back_vars_to_without_bva(const cms_vector<T>& val) const
 {
-    vector<T> ret;
+    cms_vector<T> ret;
     assert(val.size() == nVarsOuter());
     ret.reserve(nVarsOutside());
     for(size_t i = 0; i < nVarsOuter(); i++) {

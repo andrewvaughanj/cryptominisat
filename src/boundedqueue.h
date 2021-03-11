@@ -28,18 +28,17 @@ THE SOFTWARE.
 #include "constants.h"
 #include "avgcalc.h"
 #include <cassert>
-#include <vector>
+#include "cms_vector.h"
 #include <cstring>
 #include <sstream>
 #include <iomanip>
 
 namespace CMSat {
-using std::vector;
 
 template <class T, class T2 = uint64_t>
 class bqueue {
     //Only stores info for N elements
-    vector<T>  elems;
+    cms_vector<T>  elems;
     uint32_t first;
     uint32_t last;
     uint32_t maxsize; //max number of history elements

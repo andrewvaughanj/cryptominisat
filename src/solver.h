@@ -24,7 +24,7 @@ THE SOFTWARE.
 #define SOLVER_H
 
 #include "constants.h"
-#include <vector>
+#include "cms_vector.h"
 #include <fstream>
 #include <iostream>
 #include <utility>
@@ -43,7 +43,6 @@ THE SOFTWARE.
 
 namespace CMSat {
 
-using std::vector;
 using std::pair;
 using std::string;
 
@@ -83,15 +82,15 @@ class Solver : public Searcher
         ~Solver() override;
 
         void add_sql_tag(const string& name, const string& val);
-        const vector<std::pair<string, string> >& get_sql_tags() const;
+        const cms_vector<std::pair<string, string> >& get_sql_tags() const;
         void new_external_var();
         void new_external_vars(size_t n);
-        bool add_clause_outer(const vector<Lit>& lits, bool red = false);
-        bool add_xor_clause_outer(const vector<uint32_t>& vars, bool rhs);
+        bool add_clause_outer(const cms_vector<Lit>& lits, bool red = false);
+        bool add_xor_clause_outer(const cms_vector<uint32_t>& vars, bool rhs);
         void set_var_weight(Lit lit, double weight);
 
-        lbool solve_with_assumptions(const vector<Lit>* _assumptions, bool only_indep_solution);
-        lbool simplify_with_assumptions(const vector<Lit>* _assumptions = NULL);
+        lbool solve_with_assumptions(const cms_vector<Lit>* _assumptions, bool only_indep_solution);
+        lbool simplify_with_assumptions(const cms_vector<Lit>* _assumptions = NULL);
         void  set_shared_data(SharedData* shared_data);
 
         //drat for SAT problems
@@ -102,19 +101,19 @@ class Solver : public Searcher
         lbool model_value (const uint32_t p) const;  ///<Found model value for var
         lbool full_model_value (const Lit p) const;  ///<Found model value for lit
         lbool full_model_value (const uint32_t p) const;  ///<Found model value for var
-        const vector<lbool>& get_model() const;
-        const vector<Lit>& get_final_conflict() const;
-        vector<pair<Lit, Lit> > get_all_binary_xors() const;
-        vector<Xor> get_recovered_xors(const bool xor_together_xors);
-        vector<ActAndOffset> get_vsids_scores() const;
-        vector<Lit> implied_by_tmp_lits;
-        bool implied_by(const std::vector<Lit>& lits,
-            std::vector<Lit>& out_implied
+        const cms_vector<lbool>& get_model() const;
+        const cms_vector<Lit>& get_final_conflict() const;
+        cms_vector<pair<Lit, Lit> > get_all_binary_xors() const;
+        cms_vector<Xor> get_recovered_xors(const bool xor_together_xors);
+        cms_vector<ActAndOffset> get_vsids_scores() const;
+        cms_vector<Lit> implied_by_tmp_lits;
+        bool implied_by(const cms_vector<Lit>& lits,
+            cms_vector<Lit>& out_implied
         );
 
         //get learnt clauses
         void start_getting_small_clauses(uint32_t max_len, uint32_t max_glue);
-        bool get_next_small_clause(std::vector<Lit>& out);
+        bool get_next_small_clause(cms_vector<Lit>& out);
         void end_getting_small_clauses();
 
         void dump_irred_clauses(std::ostream *out) const;
@@ -126,7 +125,7 @@ class Solver : public Searcher
         static const char* get_version_sha1();
         static const char* get_compilation_env();
 
-        vector<Lit> get_zero_assigned_lits(const bool backnumber = true, bool only_nvars = false) const;
+        cms_vector<Lit> get_zero_assigned_lits(const bool backnumber = true, bool only_nvars = false) const;
         void     print_stats(const double cpu_time, const double cpu_time_total) const;
         void     print_stats_time(const double cpu_time, const double cpu_time_total) const;
         void     print_clause_stats() const;
@@ -174,7 +173,7 @@ class Solver : public Searcher
 
         bool prop_at_head() const;
         void set_decision_var(const uint32_t var);
-        bool fully_enqueue_these(const vector<Lit>& toEnqueue);
+        bool fully_enqueue_these(const cms_vector<Lit>& toEnqueue);
         bool fully_enqueue_this(const Lit lit);
         void update_assumptions_after_varreplace();
 
@@ -186,9 +185,9 @@ class Solver : public Searcher
         lbool load_solution_from_file(const string& fname);
 
         uint64_t getNumLongClauses() const;
-        bool addClause(const vector<Lit>& ps, const bool red = false);
+        bool addClause(const cms_vector<Lit>& ps, const bool red = false);
         bool add_xor_clause_inter(
-            const vector< Lit >& lits
+            const cms_vector< Lit >& lits
             , bool rhs
             , bool attach
             , bool addDrat = true
@@ -236,17 +235,17 @@ class Solver : public Searcher
             , const Clause* address
         );
         Clause* add_clause_int(
-            const vector<Lit>& lits
+            const cms_vector<Lit>& lits
             , const bool red = false
             , const ClauseStats stats = ClauseStats()
             , const bool attach = true
-            , vector<Lit>* finalLits = NULL
+            , cms_vector<Lit>* finalLits = NULL
             , bool addDrat = true
             , const Lit drat_first = lit_Undef
             , const bool sorted = false
         );
-        template<class T> vector<Lit> clause_outer_numbered(const T& cl) const;
-        template<class T> vector<uint32_t> xor_outer_numbered(const T& cl) const;
+        template<class T> cms_vector<Lit> clause_outer_numbered(const T& cl) const;
+        template<class T> cms_vector<uint32_t> xor_outer_numbered(const T& cl) const;
         size_t mem_used() const;
         void dump_memory_stats_to_sql();
         void set_sqlite(string filename);
@@ -255,8 +254,8 @@ class Solver : public Searcher
         SatZillaFeatures calculate_satzilla_features();
         SatZillaFeatures last_solve_satzilla_feature;
 
-        uint32_t undefine(vector<uint32_t>& trail_lim_vars);
-        vector<Lit> get_toplevel_units_internal(bool outer_numbering) const;
+        uint32_t undefine(cms_vector<uint32_t>& trail_lim_vars);
+        cms_vector<Lit> get_toplevel_units_internal(bool outer_numbering) const;
 
         #ifdef USE_GAUSS
         bool init_all_matrices();
@@ -267,14 +266,14 @@ class Solver : public Searcher
         bool no_irred_nonxor_contains_clash_vars();
         bool assump_contains_xor_clash();
         void extend_model_to_detached_xors();
-        void unset_clash_decision_vars(const vector<Xor>& xors);
+        void unset_clash_decision_vars(const cms_vector<Xor>& xors);
         void set_clash_decision_vars();
         bool find_and_init_all_matrices();
         #endif
 
         //assumptions
         void set_assumptions();
-        vector<Lit> inter_assumptions_tmp; //used by set_assumptions() ONLY
+        cms_vector<Lit> inter_assumptions_tmp; //used by set_assumptions() ONLY
         void add_assumption(const Lit assump);
         void check_assigns_for_assumptions() const;
         bool check_assumptions_contradict_foced_assignment() const;
@@ -283,7 +282,7 @@ class Solver : public Searcher
         //if set to TRUE, a clause has been removed during add_clause_int
         //that contained "lit, ~lit". So "lit" must be set to a value
         //Contains _outer_ variables
-        vector<bool> undef_must_set_vars;
+        cms_vector<bool> undef_must_set_vars;
 
         //Deleting clauses
         void free_cl(Clause* cl);
@@ -294,7 +293,7 @@ class Solver : public Searcher
         #endif
 
         //Helper
-        void renumber_xors_to_outside(const vector<Xor>& xors, vector<Xor>& xors_ret);
+        void renumber_xors_to_outside(const cms_vector<Xor>& xors, cms_vector<Xor>& xors_ret);
         void testing_set_solver_not_fresh();
 
     private:
@@ -303,7 +302,7 @@ class Solver : public Searcher
         FRIEND_TEST(SearcherTest, pickpolar_auto_not_changed_by_simp);
         #endif
 
-        vector<Lit> add_clause_int_tmp_cl;
+        cms_vector<Lit> add_clause_int_tmp_cl;
         lbool iterate_until_solved();
         uint64_t mem_used_vardata() const;
         void check_reconfigure();
@@ -311,29 +310,29 @@ class Solver : public Searcher
         bool already_reconfigured = false;
         long calc_num_confl_to_do_this_iter(const size_t iteration_num) const;
 
-        vector<Lit> finalCl_tmp;
+        cms_vector<Lit> finalCl_tmp;
         bool sort_and_clean_clause(
-            vector<Lit>& ps
-            , const vector<Lit>& origCl
+            cms_vector<Lit>& ps
+            , const cms_vector<Lit>& origCl
             , const bool red
             , const bool sorted = false
         );
         void set_up_sql_writer();
-        vector<std::pair<string, string> > sql_tags;
+        cms_vector<std::pair<string, string> > sql_tags;
 
         void check_and_upd_config_parameters();
-        vector<uint32_t> tmp_xor_clash_vars;
+        cms_vector<uint32_t> tmp_xor_clash_vars;
         void check_xor_cut_config_sanity() const;
         void handle_found_solution(const lbool status, const bool only_indep_solution);
-        void add_every_combination_xor(const vector<Lit>& lits, bool attach, bool addDrat);
-        void add_xor_clause_inter_cleaned_cut(const vector<Lit>& lits, bool attach, bool addDrat);
+        void add_every_combination_xor(const cms_vector<Lit>& lits, bool attach, bool addDrat);
+        void add_xor_clause_inter_cleaned_cut(const cms_vector<Lit>& lits, bool attach, bool addDrat);
         unsigned num_bits_set(const size_t x, const unsigned max_size) const;
-        void check_too_large_variable_number(const vector<Lit>& lits) const;
+        void check_too_large_variable_number(const cms_vector<Lit>& lits) const;
 
         lbool simplify_problem_outside();
-        void move_to_outside_assumps(const vector<Lit>* assumps);
-        vector<Lit> back_number_from_outside_to_outer_tmp;
-        void back_number_from_outside_to_outer(const vector<Lit>& lits)
+        void move_to_outside_assumps(const cms_vector<Lit>* assumps);
+        cms_vector<Lit> back_number_from_outside_to_outer_tmp;
+        void back_number_from_outside_to_outer(const cms_vector<Lit>& lits)
         {
             back_number_from_outside_to_outer_tmp.clear();
             for (const Lit lit: lits) {
@@ -346,7 +345,7 @@ class Solver : public Searcher
                 }
             }
         }
-        vector<Lit> outside_assumptions;
+        cms_vector<Lit> outside_assumptions;
 
         //Stats printing
         void print_norm_stats(const double cpu_time, const double cpu_time_total) const;
@@ -364,8 +363,8 @@ class Solver : public Searcher
 
         /////////////////////////////
         // Temporary datastructs -- must be cleared before use
-        mutable std::vector<Lit> tmpCl;
-        mutable std::vector<uint32_t> tmpXor;
+        mutable cms_vector<Lit> tmpCl;
+        mutable cms_vector<uint32_t> tmpXor;
 
 
         //learnt clause querying
@@ -374,9 +373,9 @@ class Solver : public Searcher
         uint32_t learnt_clause_query_at = std::numeric_limits<uint32_t>::max();
         uint32_t learnt_clause_query_watched_at = std::numeric_limits<uint32_t>::max();
         uint32_t learnt_clause_query_watched_at_sub = std::numeric_limits<uint32_t>::max();
-        vector<uint32_t> learnt_clause_query_outer_to_without_bva_map;
-        bool all_vars_outside(const vector<Lit>& cl) const;
-        void learnt_clausee_query_map_without_bva(vector<Lit>& cl);
+        cms_vector<uint32_t> learnt_clause_query_outer_to_without_bva_map;
+        bool all_vars_outside(const cms_vector<Lit>& cl) const;
+        void learnt_clausee_query_map_without_bva(cms_vector<Lit>& cl);
 
         /////////////////////////////
         //Renumberer
@@ -386,19 +385,19 @@ class Solver : public Searcher
         void save_on_var_memory(uint32_t newNumVars);
         void unSaveVarMem();
         size_t calculate_interToOuter_and_outerToInter(
-            vector<uint32_t>& outerToInter
-            , vector<uint32_t>& interToOuter
+            cms_vector<uint32_t>& outerToInter
+            , cms_vector<uint32_t>& interToOuter
         );
-        void renumber_clauses(const vector<uint32_t>& outerToInter);
+        void renumber_clauses(const cms_vector<uint32_t>& outerToInter);
         void test_renumbering() const;
         bool clean_xor_clauses_from_duplicate_and_set_vars();
-        bool update_vars_of_xors(vector<Xor>& xors);
+        bool update_vars_of_xors(cms_vector<Xor>& xors);
 
         /////////////////////////////
         // SAT solution verification
         bool verify_model() const;
         bool verify_model_implicit_clauses() const;
-        bool verify_model_long_clauses(const vector<ClOffset>& cs) const;
+        bool verify_model_long_clauses(const cms_vector<ClOffset>& cs) const;
 
 
         /////////////////////
@@ -408,12 +407,12 @@ class Solver : public Searcher
             bool pos = false;
             bool neg = false;
         };
-        vector<GivenW> weights_given;
+        cms_vector<GivenW> weights_given;
 
         /////////////////////
         // Clauses
-        bool addClauseHelper(vector<Lit>& ps);
-        bool addClauseInt(vector<Lit>& ps, const bool red = false);
+        bool addClauseHelper(cms_vector<Lit>& ps);
+        bool addClauseInt(cms_vector<Lit>& ps, const bool red = false);
 
         /////////////////
         // Debug
@@ -458,7 +457,7 @@ inline const SolverConf& Solver::getConf() const
     return conf;
 }
 
-inline const vector<std::pair<string, string> >& Solver::get_sql_tags() const
+inline const cms_vector<std::pair<string, string> >& Solver::get_sql_tags() const
 {
     return sql_tags;
 }
@@ -469,7 +468,7 @@ inline const BinTriStats& Solver::getBinTriStats() const
 }
 
 template<class T>
-inline vector<Lit> Solver::clause_outer_numbered(const T& cl) const
+inline cms_vector<Lit> Solver::clause_outer_numbered(const T& cl) const
 {
     tmpCl.clear();
     for(size_t i = 0; i < cl.size(); i++) {
@@ -480,7 +479,7 @@ inline vector<Lit> Solver::clause_outer_numbered(const T& cl) const
 }
 
 template<class T>
-inline vector<uint32_t> Solver::xor_outer_numbered(const T& cl) const
+inline cms_vector<uint32_t> Solver::xor_outer_numbered(const T& cl) const
 {
     tmpXor.clear();
     for(size_t i = 0; i < cl.size(); i++) {
@@ -490,7 +489,7 @@ inline vector<uint32_t> Solver::xor_outer_numbered(const T& cl) const
     return tmpXor;
 }
 
-inline void Solver::move_to_outside_assumps(const vector<Lit>* assumps)
+inline void Solver::move_to_outside_assumps(const cms_vector<Lit>* assumps)
 {
 
     if (assumps) {
@@ -516,7 +515,7 @@ inline void Solver::move_to_outside_assumps(const vector<Lit>* assumps)
 }
 
 inline lbool Solver::simplify_with_assumptions(
-    const vector<Lit>* _assumptions
+    const cms_vector<Lit>* _assumptions
 ) {
     fresh_solver = false;
     move_to_outside_assumps(_assumptions);
@@ -545,12 +544,12 @@ inline bool Solver::find_with_watchlist_a_or_b(Lit a, Lit b, int64_t* limit) con
     return false;
 }
 
-inline const vector<lbool>& Solver::get_model() const
+inline const cms_vector<lbool>& Solver::get_model() const
 {
     return model;
 }
 
-inline const vector<Lit>& Solver::get_final_conflict() const
+inline const cms_vector<Lit>& Solver::get_final_conflict() const
 {
     return conflict;
 }

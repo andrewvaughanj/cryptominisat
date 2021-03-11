@@ -235,9 +235,9 @@ void WalkSAT::WalkSAT::flipvar(uint32_t toflip)
 }
 
 void WalkSAT::check_make_break() {
-    vector<uint32_t> makecount_check(numvars, 0);
-    vector<uint32_t> breakcount_check(numvars, 0);
-    vector<uint32_t> numtruelit_check(numclauses, 0);
+    cms_vector<uint32_t> makecount_check(numvars, 0);
+    cms_vector<uint32_t> breakcount_check(numvars, 0);
+    cms_vector<uint32_t> numtruelit_check(numclauses, 0);
     uint32_t numfalse_check = 0;
 
     /* Set makecount + breakcount  */
@@ -434,7 +434,7 @@ bool WalkSAT::init_problem()
         numoccurrence[i] = 0;
 
     //where all clauses' literals are
-    vector<Lit> this_clause;
+    cms_vector<Lit> this_clause;
     solver->check_stats();
     uint32_t storesize = solver->litStats.irredLits+solver->binTri.irredBins*2;
     storebase = (Lit *)malloc(storesize*sizeof(Lit));
@@ -738,7 +738,7 @@ uint32_t WalkSAT::countunsat()
 
 void WalkSAT::check_num_occurs()
 {
-    vector<uint32_t> n_occur;
+    cms_vector<uint32_t> n_occur;
     n_occur.resize(numvars*2, 0);
     for (uint32_t i = 0; i < numclauses; i++) {
         uint32_t sz = clsize[i];

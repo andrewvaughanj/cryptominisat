@@ -278,10 +278,10 @@ size_t GateFinder::findEqOrGates()
 {
     assert(solver->ok);
     size_t foundRep = 0;
-    vector<OrGate> gates = orGates;
+    cms_vector<OrGate> gates = orGates;
     std::sort(gates.begin(), gates.end(), GateCompareForEq());
 
-    vector<Lit> tmp(2);
+    cms_vector<Lit> tmp(2);
     for (uint32_t i = 1; i < gates.size(); i++) {
         const OrGate& gate1 = gates[i-1];
         const OrGate& gate2 = gates[i];
@@ -412,7 +412,7 @@ bool GateFinder::shortenWithOrGate(const OrGate& gate)
         }
 
         //Set up future clause's lits
-        vector<Lit> lits;
+        cms_vector<Lit> lits;
         for (const Lit lit: cl) {
             bool inGate = false;
             for (Lit lit2: gate.getLits()) {
@@ -482,7 +482,7 @@ cl_abst_type GateFinder::calc_sorted_occ_and_set_seen2(
 ) {
     assert(seen2Set.empty());
     cl_abst_type abstraction = 0;
-    for (vector<ClOffset>& certain_size_occ: sizeSortedOcc)
+    for (cms_vector<ClOffset>& certain_size_occ: sizeSortedOcc)
         certain_size_occ.clear();
 
     watch_subarray_const csOther = solver->watches[~(gate.lit2)];
@@ -778,7 +778,7 @@ bool GateFinder::remove_clauses_using_and_gate_tri(
 
             tri_to_unlink.insert(TriToUnlink(ws.lit2(), ws.lit3(), ws.red()));
             solver->detach_tri_clause(~(gate.lit2), other_ws.lit2(), other_ws.lit3(), other_ws.red());
-            vector<Lit> lits = {~(gate.rhs), ws.lit2(), ws.lit3()};
+            cms_vector<Lit> lits = {~(gate.rhs), ws.lit2(), ws.lit3()};
             solver->add_clause_int(
                 lits
                 , ws.red() && other_ws.red()
@@ -823,7 +823,7 @@ void GateFinder::treatAndGateClause(
     }
 
     //Put into 'lits' the literals of the clause
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
     *simplifier->limit_to_decrease -= this_cl.size()*2;
     for (const Lit lit: this_cl) {
         if (lit != ~(gate.lit1)) {
@@ -857,7 +857,7 @@ void GateFinder::treatAndGateClause(
 }
 
 ClOffset GateFinder::findAndGateOtherCl(
-    const vector<ClOffset>& this_sizeSortedOcc
+    const cms_vector<ClOffset>& this_sizeSortedOcc
     , const Lit otherLit
     , const cl_abst_type abst
     , const bool gate_is_red
@@ -929,7 +929,7 @@ void GateFinder::print_graphviz_dot2()
     std::string filenename = ss.str();
     std::ofstream file(filenename.c_str(), std::ios::out);
     file << "digraph G {" << endl;
-    vector<bool> gateUsed;
+    cms_vector<bool> gateUsed;
     gateUsed.resize(orGates.size(), false);
     size_t index = 0;
     for (const OrGate orGate: orGates) {
@@ -955,8 +955,8 @@ void GateFinder::print_graphviz_dot2()
                 file << "[arrowsize=\"0.4\"];" << endl;
             }
 
-            /*vector<uint32_t>& occ2 = gateOccEq[(~*it2).toInt()];
-            for (vector<uint32_t>::const_iterator it3 = occ2.begin(), end3 = occ2.end(); it3 != end3; it3++) {
+            /*cms_vector<uint32_t>& occ2 = gateOccEq[(~*it2).toInt()];
+            for (cms_vector<uint32_t>::const_iterator it3 = occ2.begin(), end3 = occ2.end(); it3 != end3; it3++) {
                 if (*it3 == index) continue;
 
                 file << "Gate" << *it3;

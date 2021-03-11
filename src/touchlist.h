@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef __TOUCHLIST_H__
 #define __TOUCHLIST_H__
 
-#include <vector>
+#include "cms_vector.h"
 #include "solvertypes.h"
 
 namespace CMSat {
@@ -43,7 +43,7 @@ public:
         touch(Fargs...);
     }
 
-    void touch(const vector<Lit>& lits)
+    void touch(const cms_vector<Lit>& lits)
     {
         for(const Lit lit: lits)
             touch(lit.var());
@@ -60,7 +60,7 @@ public:
         }
     }
 
-    const vector<uint32_t>& getTouchedList() const
+    const cms_vector<uint32_t>& getTouchedList() const
     {
         return touched;
     }
@@ -68,7 +68,7 @@ public:
     void clear()
     {
         //Clear touchedBitset
-        for(vector<uint32_t>::const_iterator
+        for(cms_vector<uint32_t>::const_iterator
             it = touched.begin(), end = touched.end()
             ; it != end
             ; ++it
@@ -98,8 +98,8 @@ public:
     }
 
 private:
-    vector<uint32_t> touched;
-    vector<char> touchedBitset;
+    cms_vector<uint32_t> touched;
+    cms_vector<char> touchedBitset;
 };
 
 
@@ -118,7 +118,7 @@ public:
         touch(Fargs...);
     }
 
-    void touch(const vector<Lit>& lits)
+    void touch(const cms_vector<Lit>& lits)
     {
         for(const Lit lit: lits)
             touch(lit);
@@ -135,7 +135,7 @@ public:
         }
     }
 
-    const vector<uint32_t>& getTouchedList() const
+    const cms_vector<uint32_t>& getTouchedList() const
     {
         return touched;
     }
@@ -143,7 +143,7 @@ public:
     void clear()
     {
         //Clear touchedBitset
-        for(vector<uint32_t>::const_iterator
+        for(cms_vector<uint32_t>::const_iterator
             it = touched.begin(), end = touched.end()
             ; it != end
             ; ++it
@@ -173,8 +173,8 @@ public:
     }
 
 private:
-    vector<uint32_t> touched;
-    vector<char> touchedBitset;
+    cms_vector<uint32_t> touched;
+    cms_vector<char> touchedBitset;
 };
 
 

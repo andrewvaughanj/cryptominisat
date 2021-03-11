@@ -183,7 +183,7 @@ void CNF::save_on_var_memory()
 //Test for reflectivity of interToOuterMain & outerToInterMain
 void CNF::test_reflectivity_of_renumbering() const
 {
-    vector<uint32_t> test(nVarsOuter());
+    cms_vector<uint32_t> test(nVarsOuter());
     for(size_t i = 0; i  < nVarsOuter(); i++) {
         test[i] = i;
     }
@@ -207,7 +207,7 @@ void CNF::test_reflectivity_of_renumbering() const
 
 inline void CNF::updateWatch(
     watch_subarray ws
-    , const vector<uint32_t>& outerToInter
+    , const cms_vector<uint32_t>& outerToInter
 ) {
     for(Watched *it = ws.begin(), *end = ws.end()
         ; it != end
@@ -240,9 +240,9 @@ inline void CNF::updateWatch(
 }
 
 void CNF::updateVars(
-    const vector<uint32_t>& outerToInter
-    , const vector<uint32_t>& interToOuter
-    , const vector<uint32_t>& interToOuter2
+    const cms_vector<uint32_t>& outerToInter
+    , const cms_vector<uint32_t>& interToOuter
+    , const cms_vector<uint32_t>& interToOuter2
 ) {
     updateArray(varData, interToOuter);
     updateArray(assigns, interToOuter);
@@ -355,9 +355,9 @@ size_t CNF::mem_used_renumberer() const
     return mem;
 }
 
-vector<uint32_t> CNF::build_outer_to_without_bva_map() const
+cms_vector<uint32_t> CNF::build_outer_to_without_bva_map() const
 {
-    vector<uint32_t> ret;
+    cms_vector<uint32_t> ret;
     size_t at = 0;
     for(size_t i = 0; i < nVarsOuter(); i++) {
         if (!varData[map_outer_to_inter(i)].is_bva) {
@@ -422,14 +422,14 @@ void CNF::load_state(SimpleInFile& f)
 void CNF::test_all_clause_attached() const
 {
     test_all_clause_attached(longIrredCls);
-    for(const vector<ClOffset>& l: longRedCls) {
+    for(const cms_vector<ClOffset>& l: longRedCls) {
         test_all_clause_attached(l);
     }
 }
 
-void CNF::test_all_clause_attached(const vector<ClOffset>& offsets) const
+void CNF::test_all_clause_attached(const cms_vector<ClOffset>& offsets) const
 {
-    for (vector<ClOffset>::const_iterator
+    for (cms_vector<ClOffset>::const_iterator
         it = offsets.begin(), end = offsets.end()
         ; it != end
         ; ++it
@@ -544,9 +544,9 @@ void CNF::find_all_attach() const
     }
 }
 
-void CNF::find_all_attach(const vector<ClOffset>& cs) const
+void CNF::find_all_attach(const cms_vector<ClOffset>& cs) const
 {
-    for(vector<ClOffset>::const_iterator
+    for(cms_vector<ClOffset>::const_iterator
         it = cs.begin(), end = cs.end()
         ; it != end
         ; ++it
@@ -675,12 +675,12 @@ void CNF::check_watchlist(watch_subarray_const ws) const
 
 
 uint64_t CNF::count_lits(
-    const vector<ClOffset>& clause_array
+    const cms_vector<ClOffset>& clause_array
     , const bool red
     , const bool allowFreed
 ) const {
     uint64_t lits = 0;
-    for(vector<ClOffset>::const_iterator
+    for(cms_vector<ClOffset>::const_iterator
         it = clause_array.begin(), end = clause_array.end()
         ; it != end
         ; ++it
@@ -700,7 +700,7 @@ uint64_t CNF::count_lits(
 
 void CNF::print_all_clauses() const
 {
-    for(vector<ClOffset>::const_iterator
+    for(cms_vector<ClOffset>::const_iterator
         it = longIrredCls.begin(), end = longIrredCls.end()
         ; it != end
         ; ++it
@@ -764,9 +764,9 @@ void CNF::add_drat(std::ostream* os, bool add_ID) {
     drat->setFile(os);
 }
 
-vector<uint32_t> CNF::get_outside_var_incidence()
+cms_vector<uint32_t> CNF::get_outside_var_incidence()
 {
-    vector<uint32_t> inc;
+    cms_vector<uint32_t> inc;
     inc.resize(nVars(), 0);
     for(uint32_t i = 0; i < nVars()*2; i++) {
         const Lit l = Lit::toLit(i);
@@ -786,7 +786,7 @@ vector<uint32_t> CNF::get_outside_var_incidence()
     }
 
     //Map to outer
-    vector<uint32_t> inc_outer(nVarsOuter(), 0);
+    cms_vector<uint32_t> inc_outer(nVarsOuter(), 0);
     for(uint32_t i = 0; i < inc.size(); i ++) {
         uint32_t outer = map_inter_to_outer(i);
         inc_outer[outer] = inc[i];
@@ -799,9 +799,9 @@ vector<uint32_t> CNF::get_outside_var_incidence()
     return inc_outer;
 }
 
-vector<uint32_t> CNF::get_outside_var_incidence_also_red()
+cms_vector<uint32_t> CNF::get_outside_var_incidence_also_red()
 {
-    vector<uint32_t> inc;
+    cms_vector<uint32_t> inc;
     inc.resize(nVars(), 0);
     for(uint32_t i = 0; i < nVars()*2; i++) {
         const Lit l = Lit::toLit(i);
@@ -830,7 +830,7 @@ vector<uint32_t> CNF::get_outside_var_incidence_also_red()
     }
 
     //Map to outer
-    vector<uint32_t> inc_outer(nVarsOuter(), 0);
+    cms_vector<uint32_t> inc_outer(nVarsOuter(), 0);
     for(uint32_t i = 0; i < inc.size(); i ++) {
         uint32_t outer = map_inter_to_outer(i);
         inc_outer[outer] = inc[i];

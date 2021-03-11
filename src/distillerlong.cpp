@@ -99,12 +99,12 @@ struct ClauseSizeSorterInv
 };
 
 bool DistillerLong::go_through_clauses(
-    vector<ClOffset>& cls
+    cms_vector<ClOffset>& cls
 ) {
     bool time_out = false;
-    vector<ClOffset>::iterator i, j;
+    cms_vector<ClOffset>::iterator i, j;
     i = j = cls.begin();
-    for (vector<ClOffset>::iterator end = cls.end()
+    for (cms_vector<ClOffset>::iterator end = cls.end()
         ; i != end
         ; i++
     ) {
@@ -179,7 +179,7 @@ bool DistillerLong::go_through_clauses(
 }
 
 bool DistillerLong::distill_long_cls_all(
-    vector<ClOffset>& offs
+    cms_vector<ClOffset>& offs
     , double time_mult
 ) {
     assert(solver->ok);

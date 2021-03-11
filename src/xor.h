@@ -25,12 +25,11 @@ THE SOFTWARE.
 
 #include "solvertypes.h"
 
-#include <vector>
+#include "cms_vector.h"
 #include <set>
 #include <iostream>
 #include <algorithm>
 
-using std::vector;
 using std::set;
 
 namespace CMSat {
@@ -41,7 +40,7 @@ public:
     Xor()
     {}
 
-    explicit Xor(const vector<uint32_t>& cl, const bool _rhs, const vector<uint32_t>& _clash_vars):
+    explicit Xor(const cms_vector<uint32_t>& cl, const bool _rhs, const cms_vector<uint32_t>& _clash_vars):
         rhs(_rhs)
         , clash_vars(_clash_vars)
     {
@@ -51,7 +50,7 @@ public:
     }
 
     template<typename T>
-    explicit Xor(const T& cl, const bool _rhs, const vector<uint32_t>& _clash_vars):
+    explicit Xor(const T& cl, const bool _rhs, const cms_vector<uint32_t>& _clash_vars):
         rhs(_rhs)
         , clash_vars(_clash_vars)
     {
@@ -60,7 +59,7 @@ public:
         }
     }
 
-    explicit Xor(const vector<uint32_t>& cl, const bool _rhs, const uint32_t clash_var):
+    explicit Xor(const cms_vector<uint32_t>& cl, const bool _rhs, const uint32_t clash_var):
         rhs(_rhs)
     {
         clash_vars.push_back(clash_var);
@@ -69,22 +68,22 @@ public:
         }
     }
 
-    vector<uint32_t>::const_iterator begin() const
+    cms_vector<uint32_t>::const_iterator begin() const
     {
         return vars.begin();
     }
 
-    vector<uint32_t>::const_iterator end() const
+    cms_vector<uint32_t>::const_iterator end() const
     {
         return vars.end();
     }
 
-    vector<uint32_t>::iterator begin()
+    cms_vector<uint32_t>::iterator begin()
     {
         return vars.begin();
     }
 
-    vector<uint32_t>::iterator end()
+    cms_vector<uint32_t>::iterator end()
     {
         return vars.end();
     }
@@ -120,12 +119,12 @@ public:
         vars.resize(newsize);
     }
 
-    vector<uint32_t>& get_vars()
+    cms_vector<uint32_t>& get_vars()
     {
         return vars;
     }
 
-    const vector<uint32_t>& get_vars() const
+    const cms_vector<uint32_t>& get_vars() const
     {
         return vars;
     }
@@ -150,7 +149,7 @@ public:
         return true;
     }
 
-    void merge_clash(const Xor& other, vector<uint16_t>& seen) {
+    void merge_clash(const Xor& other, cms_vector<uint16_t>& seen) {
         for(const auto& v: clash_vars) {
             seen[v] = 1;
         }
@@ -169,9 +168,9 @@ public:
 
 
     bool rhs = false;
-    vector<uint32_t> clash_vars;
+    cms_vector<uint32_t> clash_vars;
     bool detached = false;
-    vector<uint32_t> vars;
+    cms_vector<uint32_t> vars;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Xor& thisXor)

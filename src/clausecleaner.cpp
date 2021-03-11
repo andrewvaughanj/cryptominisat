@@ -132,16 +132,16 @@ void ClauseCleaner::clean_implicit_clauses()
     #endif
 }
 
-void ClauseCleaner::clean_clauses_inter(vector<ClOffset>& cs)
+void ClauseCleaner::clean_clauses_inter(cms_vector<ClOffset>& cs)
 {
     assert(solver->decisionLevel() == 0);
     assert(solver->prop_at_head());
 
     if (solver->conf.verbosity > 15) {
-        cout << "Cleaning clauses in vector<>" << endl;
+        cout << "Cleaning clauses in cms_vector<>" << endl;
     }
 
-    vector<ClOffset>::iterator s, ss, end;
+    cms_vector<ClOffset>::iterator s, ss, end;
     size_t at = 0;
     for (s = ss = cs.begin(), end = cs.end();  s != end; ++s, ++at) {
         if (at + 1 < cs.size()) {
@@ -360,7 +360,7 @@ bool ClauseCleaner::clean_one_xor(Xor& x)
     }
 }
 
-bool ClauseCleaner::clean_xor_clauses(vector<Xor>& xors)
+bool ClauseCleaner::clean_xor_clauses(cms_vector<Xor>& xors)
 {
     assert(solver->ok);
     #ifdef VERBOSE_DEBUG

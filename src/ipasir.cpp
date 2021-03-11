@@ -27,13 +27,12 @@ IN THE SOFTWARE.
  */
 
 #include "cryptominisat5/cryptominisat.h"
-#include <vector>
+#include "cms_vector.h"
 #include <complex>
 #include <cassert>
 #include <string.h>
 #include "constants.h"
 
-using std::vector;
 using namespace CMSat;
 struct MySolver {
     ~MySolver()
@@ -47,10 +46,10 @@ struct MySolver {
     }
 
     SATSolver* solver;
-    vector<Lit> clause;
-    vector<Lit> assumptions;
-    vector<Lit> last_conflict;
-    vector<char> conflict_cl_map;
+    cms_vector<Lit> clause;
+    cms_vector<Lit> assumptions;
+    cms_vector<Lit> last_conflict;
+    cms_vector<char> conflict_cl_map;
 };
 
 extern "C" {

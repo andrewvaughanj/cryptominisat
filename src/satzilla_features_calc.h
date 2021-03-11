@@ -23,13 +23,12 @@ THE SOFTWARE.
 #ifndef __FEATURES_FAST_H__
 #define __FEATURES_FAST_H__
 
-#include <vector>
+#include "cms_vector.h"
 #include <limits>
 #include <utility>
 #include "satzilla_features.h"
 #include "cloffset.h"
 #include "watched.h"
-using std::vector;
 using std::pair;
 using std::make_pair;
 
@@ -52,7 +51,7 @@ private:
     void calculate_extra_clause_stats();
     void normalise_values();
     void calculate_cl_distributions(
-        const vector<ClOffset>& clauses
+        const cms_vector<ClOffset>& clauses
         , struct SatZillaFeatures::Distrib& distrib_data
     );
 
@@ -73,7 +72,7 @@ private:
         int horn = 0;
     };
 
-    vector<VARIABLE> myVars;
+    cms_vector<VARIABLE> myVars;
     SatZillaFeatures satzilla_feat;
 };
 

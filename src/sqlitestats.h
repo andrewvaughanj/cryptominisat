@@ -144,7 +144,7 @@ private:
     bool connectServer(const Solver* solver);
     bool add_solverrun(const Solver* solver);
     void init(const char* name, sqlite3_stmt** stmt);
-    vector<string> get_columns(const char* tablename);
+    cms_vector<string> get_columns(const char* tablename);
 
     void addStartupData();
     void del_prepared_stmt(sqlite3_stmt* stmt);

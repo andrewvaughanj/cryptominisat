@@ -27,8 +27,7 @@ THE SOFTWARE.
 #include "cryptominisat5/solvertypesmini.h"
 #include "clabstraction.h"
 #include "clause.h"
-#include <vector>
-using std::vector;
+#include "cms_vector.h"
 
 namespace CMSat {
 
@@ -74,7 +73,7 @@ public:
         bool subsumedIrred = false;
     };
 
-    Sub1Ret backw_sub_str_long_with_implicit(const vector<Lit>& lits);
+    Sub1Ret backw_sub_str_long_with_implicit(const cms_vector<Lit>& lits);
     Sub1Ret strengthen_subsume_and_unlink_and_markirred(ClOffset offset);
 
     struct Stats
@@ -100,7 +99,7 @@ public:
         const ClOffset offset
         , const T& ps
         , const cl_abst_type abs
-        , vector<ClOffset>& out_subsumed
+        , cms_vector<ClOffset>& out_subsumed
         , const bool removeImplicit = false
     );
 
@@ -131,8 +130,8 @@ private:
         const ClOffset offset
         , const T& ps
         , const cl_abst_type abs
-        , vector<ClOffset>& out_subsumed
-        , vector<Lit>& out_lits
+        , cms_vector<ClOffset>& out_subsumed
+        , cms_vector<Lit>& out_lits
     );
 
     template<class T>
@@ -140,8 +139,8 @@ private:
         const ClOffset offset
         , const T& ps
         , cl_abst_type abs
-        , vector<ClOffset>& out_subsumed
-        , vector<Lit>& out_lits
+        , cms_vector<ClOffset>& out_subsumed
+        , cms_vector<Lit>& out_lits
         , const Lit lit
     );
 
@@ -152,9 +151,9 @@ private:
     Lit subset1(const T1& A, const T2& B);
     bool subsetAbst(const cl_abst_type A, const cl_abst_type B);
 
-    vector<ClOffset> subs;
-    vector<Lit> subsLits;
-    vector<Lit> tmpLits;
+    cms_vector<ClOffset> subs;
+    cms_vector<Lit> subsLits;
+    cms_vector<Lit> tmpLits;
     size_t tried_bin_tri = 0;
     uint64_t subsumedBin = 0;
     uint64_t strBin = 0;

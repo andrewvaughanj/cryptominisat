@@ -48,7 +48,7 @@ public:
 
 private:
     Solver* solver;
-    vector<ClOffset> delayed_clause_free;
+    cms_vector<ClOffset> delayed_clause_free;
     double total_time = 0.0;
 
     unsigned cl_marked;
@@ -57,7 +57,7 @@ private:
 
     size_t last_reducedb_num_conflicts = 0;
     bool red_cl_too_young(const Clause* cl) const;
-    void clear_clauses_stats(vector<ClOffset>& clauseset);
+    void clear_clauses_stats(cms_vector<ClOffset>& clauseset);
 
     bool cl_needs_removal(const Clause* cl, const ClOffset offset) const;
     void remove_cl_from_lev2();

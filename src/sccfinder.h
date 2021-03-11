@@ -108,11 +108,11 @@ class SCCFinder {
 
         //temporaries
         uint32_t globalIndex;
-        vector<uint32_t> index;
-        vector<uint32_t> lowlink;
-        std::stack<uint32_t, vector<uint32_t> > stack;
-        vector<char> stackIndicator;
-        vector<uint32_t> tmp;
+        cms_vector<uint32_t> index;
+        cms_vector<uint32_t> lowlink;
+        std::stack<uint32_t, cms_vector<uint32_t> > stack;
+        cms_vector<char> stackIndicator;
+        cms_vector<uint32_t> tmp;
         uint32_t depth;
 
         Solver* solver;

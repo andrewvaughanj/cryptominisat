@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef __DISTILLERWITHBIN_H__
 #define __DISTILLERWITHBIN_H__
 
-#include <vector>
+#include "cms_vector.h"
 #include "clause.h"
 #include "constants.h"
 #include "solvertypes.h"
@@ -32,7 +32,6 @@ THE SOFTWARE.
 
 namespace CMSat {
 
-using std::vector;
 
 class Solver;
 class Clause;
@@ -145,14 +144,14 @@ class DistillerLongWithImpl {
             , bool red
             , const bool alsoStrengthen
         );
-        void randomise_order_of_clauses(vector<ClOffset>& clauses);
+        void randomise_order_of_clauses(cms_vector<ClOffset>& clauses);
         uint64_t calc_time_available(
             const bool alsoStrengthen
             , const bool red
         ) const;
 
         bool shorten_all_cl_with_watch(
-            vector<ClOffset>& clauses
+            cms_vector<ClOffset>& clauses
             , bool red
             , bool alsoStrengthen
         );
@@ -160,10 +159,10 @@ class DistillerLongWithImpl {
 
         //Working set
         Solver* solver;
-        vector<Lit> lits;
-        vector<Lit> lits2;
-        vector<uint16_t>& seen;
-        vector<uint8_t>& seen2;
+        cms_vector<Lit> lits;
+        cms_vector<Lit> lits2;
+        cms_vector<uint16_t>& seen;
+        cms_vector<uint8_t>& seen2;
 
         //Global status
         Stats runStats;

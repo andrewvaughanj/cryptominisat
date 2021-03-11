@@ -243,7 +243,7 @@ void ReduceDB::dump_sql_cl_data(
     solver->sqlStats->begin_transaction();
     uint64_t added_to_db = 0;
 
-    vector<ClOffset> all_learnt;
+    cms_vector<ClOffset> all_learnt;
     for(uint32_t lev = 0; lev < solver->longRedCls.size(); lev++) {
         auto& cc = solver->longRedCls[lev];
         for(const auto& offs: cc) {

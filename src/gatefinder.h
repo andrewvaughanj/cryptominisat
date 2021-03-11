@@ -177,7 +177,7 @@ private:
     );
 
     bool all_simplifications_with_gates();
-    vector<ClOffset> subs; //to reduce overhead of allocation
+    cms_vector<ClOffset> subs; //to reduce overhead of allocation
     bool shortenWithOrGate(const OrGate& gate);
     size_t findEqOrGates();
 
@@ -222,7 +222,7 @@ private:
     );
 
     ClOffset findAndGateOtherCl(
-        const vector<ClOffset>& this_sizeSortedOcc
+        const cms_vector<ClOffset>& this_sizeSortedOcc
         , const Lit lit
         , const cl_abst_type abst2
         , const bool gate_is_red
@@ -255,13 +255,13 @@ private:
     );
 
     ///temporary for and-gate treatment. Cleared at every treatAndGate() call
-    vector<vector<ClOffset> > sizeSortedOcc;
+    cms_vector<cms_vector<ClOffset> > sizeSortedOcc;
 
     //Indexes, gate data
-    vector<OrGate> orGates; //List of OR gates
+    cms_vector<OrGate> orGates; //List of OR gates
 
     //For temporaries
-    vector<uint32_t> seen2Set; //Bits that have been set in seen2, and later need to be cleared
+    cms_vector<uint32_t> seen2Set; //Bits that have been set in seen2, and later need to be cleared
     set<ClOffset> clToUnlink;
     struct TriToUnlink
     {
@@ -304,9 +304,9 @@ private:
     //Main data
     OccSimplifier *simplifier;
     Solver *solver;
-    vector<uint16_t>& seen;
-    vector<uint8_t>& seen2;
-    vector<Lit>& toClear;
+    cms_vector<uint16_t>& seen;
+    cms_vector<uint8_t>& seen2;
+    cms_vector<Lit>& toClear;
 };
 
 inline const GateFinder::Stats& GateFinder::get_stats() const

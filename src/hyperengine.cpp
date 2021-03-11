@@ -465,7 +465,7 @@ Lit HyperEngine::deepest_common_ancestor()
         cout << "LEVEL analyzeFail" << endl;
         #endif
         size_t num_lit_undef = 0;
-        for (vector<Lit>::iterator
+        for (cms_vector<Lit>::iterator
             it = currAncestors.begin(), end = currAncestors.end()
             ; it != end
             ; ++it

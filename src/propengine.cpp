@@ -25,7 +25,7 @@ THE SOFTWARE.
 #include <string.h>
 #include <algorithm>
 #include <limits.h>
-#include <vector>
+#include "cms_vector.h"
 #include <iomanip>
 #include <algorithm>
 
@@ -512,8 +512,8 @@ void PropEngine::printWatchList(const Lit lit) const
 }
 
 void PropEngine::updateVars(
-    const vector<uint32_t>& outerToInter
-    , const vector<uint32_t>& interToOuter
+    const cms_vector<uint32_t>& outerToInter
+    , const cms_vector<uint32_t>& interToOuter
 ) {
     //Trail is NOT correct, only its length is correct
     for(Trail& t: trail) {

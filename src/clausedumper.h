@@ -24,12 +24,11 @@ THE SOFTWARE.
 #define __CLAUSEDUMPER_H__
 
 #include <fstream>
-#include <vector>
+#include "cms_vector.h"
 #include <limits>
 #include "cryptominisat5/solvertypesmini.h"
 #include "cloffset.h"
 
-using std::vector;
 
 namespace CMSat {
 
@@ -81,11 +80,11 @@ private:
     uint32_t dump_component_clauses(std::ostream *out, bool outer_numbering);
     void dump_vars_appearing_inverted(std::ostream *out, bool outer_numbering);
     void dump_clauses(std::ostream *out,
-        const vector<ClOffset>& cls
+        const cms_vector<ClOffset>& cls
         , const bool outer_number
     );
 
-    vector<Lit> tmpCl;
+    cms_vector<Lit> tmpCl;
 
 };
 

@@ -20,13 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ***********************************************/
 
-#include <vector>
+#include "cms_vector.h"
 #include <cstdint>
 
 #ifndef VARDISTGEN_H
 #define VARDISTGEN_H
 
-using std::vector;
 
 namespace CMSat {
 
@@ -61,7 +60,7 @@ private:
     double compute_tot_act_vsids(Clause* cl) const;
 
     Solver* solver;
-    vector<VarData2> data;
+    cms_vector<VarData2> data;
 
 };
 

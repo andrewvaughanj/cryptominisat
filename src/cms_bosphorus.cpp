@@ -82,7 +82,7 @@ bool CMSBosphorus::doit()
 
     auto cnf = bosph->cnf_from_anf_and_cnf(NULL, anf);
     auto cls = bosph->get_clauses(cnf);
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
     for(auto x: cls) {
         bool use = true;
         for(uint32_t i = 0; i < x.size(); i++) {

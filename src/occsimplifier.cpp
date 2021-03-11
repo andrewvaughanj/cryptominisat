@@ -149,13 +149,13 @@ void OccSimplifier::save_on_var_memory()
 
 void OccSimplifier::print_blocked_clauses_reverse() const
 {
-    for(vector<BlockedClauses>::const_reverse_iterator
+    for(cms_vector<BlockedClauses>::const_reverse_iterator
         it = blockedClauses.rbegin(), end = blockedClauses.rend()
         ; it != end
         ; ++it
     ) {
         size_t at = 1;
-        vector<Lit> lits;
+        cms_vector<Lit> lits;
         while(at < it->size()) {
             Lit l = it->at(at, blkcls);
             if (l == lit_Undef) {
@@ -226,7 +226,7 @@ void OccSimplifier::extend_model(SolutionExtender* extender)
     #endif
 
     //go through in reverse order
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
     for (int i = (int)blockedClauses.size()-1; i >= 0; i--) {
         BlockedClauses* it = &blockedClauses[i];
         if (it->toRemove) {
@@ -486,7 +486,7 @@ bool OccSimplifier::complete_clean_clause(Clause& cl)
     }
 }
 
-uint64_t OccSimplifier::calc_mem_usage_of_occur(const vector<ClOffset>& toAdd) const
+uint64_t OccSimplifier::calc_mem_usage_of_occur(const cms_vector<ClOffset>& toAdd) const
 {
     uint64_t memUsage = 0;
     for (const ClOffset offs: toAdd) {
@@ -537,7 +537,7 @@ void OccSimplifier::print_linkin_data(const LinkInData link_in_data) const
 
 
 OccSimplifier::LinkInData OccSimplifier::link_in_clauses(
-    const vector<ClOffset>& toAdd
+    const cms_vector<ClOffset>& toAdd
     , bool alsoOccur
     , uint32_t max_size
     , int64_t link_in_lit_limit
@@ -817,7 +817,7 @@ bool OccSimplifier::clear_vars_from_cls_that_have_been_set(size_t& last_trail)
     //BUG TODO
     //solver->clauseCleaner->clean_implicit_clauses();
 
-    vector<ClOffset> cls_to_clean;
+    cms_vector<ClOffset> cls_to_clean;
     while(last_trail < solver->trail_size()) {
         Lit l = solver->trail_at(last_trail++);
         watch_subarray ws = solver->watches[l];
@@ -1361,7 +1361,7 @@ bool OccSimplifier::execute_simplifier_strategy(const string& strategy)
                     assert(solver->okay());
                     solver->ok = finder.xor_together_xors(xors);
                     if (solver->ok) {
-                        vector<Lit> out_changed_occur;
+                        cms_vector<Lit> out_changed_occur;
                         finder.remove_xors_without_connecting_vars(xors);
                         topLevelGauss->toplevelgauss(xors, &out_changed_occur);
                         //these may have changed, recalculating occur
@@ -1617,7 +1617,7 @@ bool OccSimplifier::perform_ternary(Clause* cl, ClOffset offs)
     }
 
     //Add new ternary resolvents
-    vector<Lit> tmp;
+    cms_vector<Lit> tmp;
     for(const Tri& newcl: cl_to_add_ternary) {
         ClauseStats stats;
         stats.glue = solver->conf.glue_put_lev1_if_below_or_eq;
@@ -1916,7 +1916,7 @@ bool OccSimplifier::uneliminate(uint32_t var)
     << endl;
     #endif
 
-    vector<Lit> lits;
+    cms_vector<Lit> lits;
     size_t bat = 1;
     while(bat < blockedClauses[at_blocked_cls].size()) {
         Lit l = blockedClauses[at_blocked_cls].at(bat, blkcls);
@@ -1945,7 +1945,7 @@ void OccSimplifier::remove_by_drat_recently_blocked_clauses(size_t origBlockedSi
     }
 
     for(size_t i = origBlockedSize; i < blockedClauses.size(); i++) {
-        vector<Lit> lits;
+        cms_vector<Lit> lits;
         size_t at = 1;
         while(at < blockedClauses[i].size()) {
             const Lit l = blockedClauses[i].at(at, blkcls);
@@ -2021,7 +2021,7 @@ void OccSimplifier::finishUp(
 void OccSimplifier::sanityCheckElimedVars()
 {
     //First, sanity-check the long clauses
-    for (vector<ClOffset>::const_iterator
+    for (cms_vector<ClOffset>::const_iterator
         it =  clauses.begin(), end = clauses.end()
         ; it != end
         ; ++it
@@ -2129,12 +2129,12 @@ void OccSimplifier::set_limits()
 void OccSimplifier::cleanBlockedClauses()
 {
     assert(solver->decisionLevel() == 0);
-    vector<BlockedClauses>::iterator i = blockedClauses.begin();
-    vector<BlockedClauses>::iterator j = blockedClauses.begin();
+    cms_vector<BlockedClauses>::iterator i = blockedClauses.begin();
+    cms_vector<BlockedClauses>::iterator j = blockedClauses.begin();
 
     uint64_t i_blkcls = 0;
     uint64_t j_blkcls = 0;
-    for (vector<BlockedClauses>::iterator
+    for (cms_vector<BlockedClauses>::iterator
         end = blockedClauses.end()
         ; i != end
         ; i++
@@ -2193,7 +2193,7 @@ void OccSimplifier::rem_cls_from_watch_due_to_varelim(
     todo.moveTo(tmp_rem_cls_copy);
     assert(solver->watches[lit].empty());
 
-    vector<Lit>& lits = tmp_rem_lits;
+    cms_vector<Lit>& lits = tmp_rem_lits;
     for (const Watched watch :tmp_rem_cls_copy) {
         lits.clear();
         bool red = false;
@@ -2266,14 +2266,14 @@ void OccSimplifier::rem_cls_from_watch_due_to_varelim(
     }
 }
 
-void OccSimplifier::add_clause_to_blck(const vector<Lit>& lits)
+void OccSimplifier::add_clause_to_blck(const cms_vector<Lit>& lits)
 {
     for(const Lit& l: lits) {
         removed_cl_with_var.touch(l.var());
         elim_calc_need_update.touch(l.var());
     }
 
-    vector<Lit> lits_outer = lits;
+    cms_vector<Lit> lits_outer = lits;
     solver->map_inter_to_outer(lits_outer);
     for(Lit l: lits_outer) {
         blkcls.push_back(l);
@@ -2546,7 +2546,7 @@ void OccSimplifier::print_var_eliminate_stat(const Lit lit) const
 }
 
 bool OccSimplifier::add_varelim_resolvent(
-    vector<Lit>& finalLits
+    cms_vector<Lit>& finalLits
     , const ClauseStats& stats
     , const bool is_xor
 ) {

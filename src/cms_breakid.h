@@ -23,12 +23,11 @@ THE SOFTWARE.
 #ifndef CMS_BREAKID_H
 #define CMS_BREAKID_H
 
-#include <vector>
+#include "cms_vector.h"
 #include <unordered_map>
 #include "solvertypes.h"
 #include "cloffset.h"
 
-using std::vector;
 using std::unordered_map;
 
 namespace BID {
@@ -46,8 +45,8 @@ public:
     void finished_solving();
     void start_new_solving();
     void updateVars(
-    const vector<uint32_t>& outerToInter
-    , const vector<uint32_t>& interToOuter);
+    const cms_vector<uint32_t>& outerToInter
+    , const cms_vector<uint32_t>& interToOuter);
     void update_var_after_varreplace();
 
     static uint32_t hash_clause(const Lit* lits, const uint32_t size) {
@@ -70,17 +69,17 @@ private:
     enum class add_cl_ret {added_cl, skipped_cl, unsat};
     template<class T>
     add_cl_ret add_this_clause(const T& cl);
-    vector<Lit> brkid_lits;
+    cms_vector<Lit> brkid_lits;
 
     ///Valid permutations. Contains outer lits
-    vector<unordered_map<Lit, Lit> > perms_outer;
+    cms_vector<unordered_map<Lit, Lit> > perms_outer;
 
     bool already_called = false;
     //variable that is to be assumed to break symmetries
     uint32_t symm_var = var_Undef;
     int64_t set_time_lim;
     uint64_t num_lits_in_graph;
-    vector<ClOffset> dedup_cls;
+    cms_vector<ClOffset> dedup_cls;
 
     Solver* solver;
     BID::BreakID* breakid = NULL;

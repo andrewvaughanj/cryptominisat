@@ -126,19 +126,19 @@ public:
     /////////////////////
     // Branching
     /////////////////////
-    vector<ActAndOffset> var_act_vsids;
-    vector<ActAndOffset> var_act_maple;
+    cms_vector<ActAndOffset> var_act_vsids;
+    cms_vector<ActAndOffset> var_act_maple;
     double var_decay;
     double var_decay_max;
     double maple_step_size;
     struct VarOrderLt { ///Order variables according to their activities
-        const vector<ActAndOffset>&  activities;
+        const cms_vector<ActAndOffset>&  activities;
         bool operator () (const uint32_t x, const uint32_t y) const
         {
             return activities[x].combine() > activities[y].combine();
         }
 
-        explicit VarOrderLt(const vector<ActAndOffset>& _activities) :
+        explicit VarOrderLt(const cms_vector<ActAndOffset>& _activities) :
             activities(_activities)
         {}
     };
@@ -147,7 +147,7 @@ public:
     Heap<VarOrderLt> order_heap_maple; ///NOT VALID WHILE SIMPLIFYING
     #ifdef VMTF_NEEDED
     Queue vmtf_queue;
-    vector<uint64_t> vmtf_btab; // enqueue time stamps for queue
+    cms_vector<uint64_t> vmtf_btab; // enqueue time stamps for queue
     void vmtf_update_queue_unassigned (uint32_t idx);
     void vmtf_init_enqueue (uint32_t idx);
     void vmtf_bump_queue (uint32_t var);
@@ -175,8 +175,8 @@ protected:
 
     // Solver state:
     //
-    vector<Trail>  trail; ///< Assignment stack; stores all assignments made in the order they were made.
-    vector<uint32_t>    trail_lim;        ///< Separator indices for different decision levels in 'trail'.
+    cms_vector<Trail>  trail; ///< Assignment stack; stores all assignments made in the order they were made.
+    cms_vector<uint32_t>    trail_lim;        ///< Separator indices for different decision levels in 'trail'.
     uint32_t            qhead;            ///< Head of queue (as index into the trail)
     Lit                 failBinLit;       ///< Used to store which watches[lit] we were looking through when conflict occured
 
@@ -244,8 +244,8 @@ protected:
 
     //Var selection, activity, etc.
     void updateVars(
-        const vector<uint32_t>& outerToInter
-        , const vector<uint32_t>& interToOuter
+        const cms_vector<uint32_t>& outerToInter
+        , const cms_vector<uint32_t>& interToOuter
     );
 
     size_t mem_used() const

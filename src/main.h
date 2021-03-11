@@ -24,16 +24,16 @@ THE SOFTWARE.
 #define MAIN_H
 
 #include <string>
-#include <vector>
+#include "cms_vector.h"
 #include <memory>
 #include <fstream>
+#include <vector>
 
 #include "main_common.h"
 #include "solverconf.h"
 #include "cryptominisat5/cryptominisat.h"
 
 using std::string;
-using std::vector;
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
@@ -115,16 +115,16 @@ class Main: public MainCommon
         uint64_t maxconfl;
 
         //Sampling vars
-        vector<uint32_t> sampling_vars;
+        cms_vector<uint32_t> sampling_vars;
         std::string sampling_vars_str = "";
         bool only_sampling_solution = false;
         std::string assump_filename;
-        vector<Lit> assumps;
+        cms_vector<Lit> assumps;
 
 
         //Files to read & write
         bool fileNamePresent;
-        vector<string> filesToRead;
+        std::vector<string> filesToRead;
         std::ofstream* resultfile = NULL;
         string dump_red_fname;
         uint32_t dump_red_max_len = 10000;

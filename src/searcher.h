@@ -86,8 +86,8 @@ class Searcher : public HyperEngine
         MTRand mtrand; ///< random number generator
 
 
-        vector<lbool>  model;
-        vector<Lit>   conflict;     ///<If problem is unsatisfiable (possibly under assumptions), this vector represent the final conflict clause expressed in the assumptions.
+        cms_vector<lbool>  model;
+        cms_vector<Lit>   conflict;     ///<If problem is unsatisfiable (possibly under assumptions), this vector represent the final conflict clause expressed in the assumptions.
         template<bool update_bogoprops>
         PropBy propagate();
 
@@ -131,7 +131,7 @@ class Searcher : public HyperEngine
         }
 
         //ChronoBT
-        vector<Trail> add_tmp_canceluntil;
+        cms_vector<Trail> add_tmp_canceluntil;
         template<bool do_insert_var_order = true, bool update_bogoprops = false>
         void cancelUntil(uint32_t level); ///<Backtrack until a certain level.
         ConflictData find_conflict_level(PropBy& pb);
@@ -149,8 +149,8 @@ class Searcher : public HyperEngine
         enum class gauss_ret {g_cont, g_nothing, g_false};
         gauss_ret gauss_jordan_elim();
         void check_need_gauss_jordan_disable();
-        vector<EGaussian*> gmatrices;
-        vector<GaussQData> gqueuedata;
+        cms_vector<EGaussian*> gmatrices;
+        cms_vector<GaussQData> gqueuedata;
         #endif
 
         double get_cla_inc() const
@@ -167,7 +167,7 @@ class Searcher : public HyperEngine
         void bump_cl_act(Clause* cl);
         void simple_create_learnt_clause(
             PropBy confl,
-            vector<Lit>& out_learnt,
+            cms_vector<Lit>& out_learnt,
             bool True_confl
         );
 
@@ -183,7 +183,7 @@ class Searcher : public HyperEngine
         void insert_var_order(const uint32_t x, branch type);
         void insert_var_order(const uint32_t x);
         void insert_var_order_all(const uint32_t x);
-        vector<uint32_t> implied_by_learnts; //for glue-based extra var activity bumping
+        cms_vector<uint32_t> implied_by_learnts; //for glue-based extra var activity bumping
         void update_branch_params();
         template<bool update_bogoprops>
         lbool new_decision();
@@ -226,8 +226,8 @@ class Searcher : public HyperEngine
         void new_vars(const size_t n) override;
         void save_on_var_memory();
         void updateVars(
-            const vector<uint32_t>& outerToInter
-            , const vector<uint32_t>& interToOuter
+            const cms_vector<uint32_t>& outerToInter
+            , const cms_vector<uint32_t>& interToOuter
         );
 
 
@@ -237,7 +237,7 @@ class Searcher : public HyperEngine
         void save_state(SimpleOutFile& f, const lbool status) const;
         void load_state(SimpleInFile& f, const lbool status);
         void write_long_cls(
-            const vector<ClOffset>& clauses
+            const cms_vector<ClOffset>& clauses
             , SimpleOutFile& f
             , const bool red
         ) const;
@@ -259,13 +259,13 @@ class Searcher : public HyperEngine
 
 
         void fill_assumptions_set();
-        void update_assump_conflict_to_orig_outside(vector<Lit>& out_conflict);
+        void update_assump_conflict_to_orig_outside(cms_vector<Lit>& out_conflict);
 
         /////////////////////
         // Learning
         /////////////////////
-        vector<Lit> learnt_clause;
-        vector<Lit> decision_clause;
+        cms_vector<Lit> learnt_clause;
+        cms_vector<Lit> decision_clause;
         template<bool update_bogoprops>
         void analyze_conflict(
             PropBy confl //The conflict that we are investigating
@@ -286,7 +286,7 @@ class Searcher : public HyperEngine
         void debug_print_resolving_clause(const PropBy confl) const;
         template<bool update_bogoprops>
         void add_lit_to_learnt(Lit lit, uint32_t nDecisionLevel);
-        void analyze_final_confl_with_assumptions(const Lit p, vector<Lit>& out_conflict);
+        void analyze_final_confl_with_assumptions(const Lit p, cms_vector<Lit>& out_conflict);
         void update_clause_glue_from_analysis(Clause* cl);
         template<bool update_bogoprops>
         void minimize_learnt_clause();
@@ -376,12 +376,12 @@ class Searcher : public HyperEngine
         void create_otf_subsuming_long_clause(Clause& cl, ClOffset offset);*/
 
 
-        bool subset(const vector<Lit>& A, const Clause& B); //Used for on-the-fly subsumption. Does A subsume B? Uses 'seen' to do its work
+        bool subset(const cms_vector<Lit>& A, const Clause& B); //Used for on-the-fly subsumption. Does A subsume B? Uses 'seen' to do its work
 
         ////////////
         // Transitive on-the-fly self-subsuming resolution
-        void   minimise_redundant_more_more(vector<Lit>& cl);
-        void   binary_based_morem_minim(vector<Lit>& cl);
+        void   minimise_redundant_more_more(cms_vector<Lit>& cl);
+        void   binary_based_morem_minim(cms_vector<Lit>& cl);
 
 
         friend class Gaussian;
@@ -423,9 +423,9 @@ class Searcher : public HyperEngine
         #endif
 
         #if defined(STATS_NEEDED_BRANCH) || defined(FINAL_PREDICTOR_BRANCH)
-        vector<uint32_t> level_used_for_cl;
-        vector<uint32_t> vars_used_for_cl;
-        vector<unsigned char> level_used_for_cl_arr;
+        cms_vector<uint32_t> level_used_for_cl;
+        cms_vector<uint32_t> vars_used_for_cl;
+        cms_vector<unsigned char> level_used_for_cl_arr;
         #endif
 
         //Other

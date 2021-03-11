@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 
 #include <map>
-#include <vector>
+#include "cms_vector.h"
 #include <list>
 #include <set>
 #include <queue>
@@ -44,7 +44,6 @@ THE SOFTWARE.
 
 namespace CMSat {
 
-using std::vector;
 using std::map;
 using std::set;
 using std::pair;
@@ -81,12 +80,12 @@ struct BlockedClauses {
         end = f.get_uint64_t();
     }
 
-    const Lit& at(const uint64_t at, const vector<Lit>& blkcls) const
+    const Lit& at(const uint64_t at, const cms_vector<Lit>& blkcls) const
     {
         return blkcls[start+at];
     }
 
-    Lit& at(const uint64_t at, vector<Lit>& blkcls)
+    Lit& at(const uint64_t at, cms_vector<Lit>& blkcls)
     {
         return blkcls[start+at];
     }
@@ -264,12 +263,12 @@ public:
     void sort_occurs_and_set_abst();
     void save_state(SimpleOutFile& f);
     void load_state(SimpleInFile& f);
-    vector<ClOffset> added_long_cl;
+    cms_vector<ClOffset> added_long_cl;
     TouchListLit added_cl_to_var;
-    vector<uint32_t> n_occurs;
+    cms_vector<uint32_t> n_occurs;
     TouchListLit removed_cl_with_var;
-    vector<std::pair<Lit, Lit> > added_bin_cl;
-    vector<ClOffset> clauses;
+    cms_vector<std::pair<Lit, Lit> > added_bin_cl;
+    cms_vector<ClOffset> clauses;
     void check_elimed_vars_are_unassignedAndStats() const;
     void unlink_clause(ClOffset cc
         , bool drat = true
@@ -311,20 +310,20 @@ private:
             size = other.size;
         }
     };
-    vector<Tri> cl_to_add_ternary;
+    cms_vector<Tri> cl_to_add_ternary;
 
     //debug
     bool subsetReverse(const Clause& B) const;
 
     //Persistent data
     Solver*  solver;              ///<The solver this simplifier is connected to
-    vector<uint16_t>& seen;
-    vector<uint8_t>& seen2;
-    vector<Lit>& toClear;
-    vector<bool> sampling_vars_occsimp;
+    cms_vector<uint16_t>& seen;
+    cms_vector<uint8_t>& seen2;
+    cms_vector<Lit>& toClear;
+    cms_vector<bool> sampling_vars_occsimp;
 
     //Temporaries
-    vector<Lit>     dummy;       ///<Used by merge()
+    cms_vector<Lit>     dummy;       ///<Used by merge()
 
     //Time Limits
     uint64_t clause_lits_added;
@@ -366,11 +365,11 @@ private:
     };
     LinkInData link_in_data_irred;
     LinkInData link_in_data_red;
-    uint64_t calc_mem_usage_of_occur(const vector<ClOffset>& toAdd) const;
+    uint64_t calc_mem_usage_of_occur(const cms_vector<ClOffset>& toAdd) const;
     void     print_mem_usage_of_occur(uint64_t memUsage) const;
     void     print_linkin_data(const LinkInData link_in_data) const;
     OccSimplifier::LinkInData link_in_clauses(
-        const vector<ClOffset>& toAdd
+        const cms_vector<ClOffset>& toAdd
         , bool alsoOccur
         , uint32_t max_size
         , int64_t link_in_lit_limit
@@ -408,17 +407,17 @@ private:
     /////////////////////
     //Variable elimination
     uint32_t grow = 0; /// maximum grow rate for clauses
-    vector<uint64_t> varElimComplexity;
+    cms_vector<uint64_t> varElimComplexity;
     ///Order variables according to their complexity of elimination
     struct VarOrderLt {
-        const vector<uint64_t>&  varElimComplexity;
+        const cms_vector<uint64_t>&  varElimComplexity;
         bool operator () (const uint64_t x, const uint64_t y) const
         {
             return varElimComplexity[x] < varElimComplexity[y];
         }
 
         explicit VarOrderLt(
-            const vector<uint64_t>& _varElimComplexity
+            const cms_vector<uint64_t>& _varElimComplexity
         ) :
             varElimComplexity(_varElimComplexity)
         {}
@@ -426,9 +425,9 @@ private:
     void        order_vars_for_elim();
     Heap<VarOrderLt> velim_order;
     void        rem_cls_from_watch_due_to_varelim(watch_subarray todo, const Lit lit);
-    vector<Lit> tmp_rem_lits;
+    cms_vector<Lit> tmp_rem_lits;
     vec<Watched> tmp_rem_cls_copy;
-    void        add_clause_to_blck(const vector<Lit>& lits);
+    void        add_clause_to_blck(const cms_vector<Lit>& lits);
     void        set_var_as_eliminated(const uint32_t var, const Lit lit);
     bool        can_eliminate_var(const uint32_t var) const;
     bool        clear_vars_from_cls_that_have_been_set(size_t& last_trail);
@@ -437,17 +436,17 @@ private:
 
 
     TouchList   elim_calc_need_update;
-    vector<ClOffset> cl_to_free_later;
+    cms_vector<ClOffset> cl_to_free_later;
     bool        maybe_eliminate(const uint32_t x);
     bool        deal_with_added_long_and_bin(const bool main);
     bool        prop_and_clean_long_and_impl_clauses();
-    vector<Lit> tmp_bin_cl;
+    cms_vector<Lit> tmp_bin_cl;
     void        create_dummy_blocked_clause(const Lit lit);
     int         test_elim_and_fill_resolvents(uint32_t var);
     void        mark_gate_in_poss_negs(Lit elim_lit, watch_subarray_const poss, watch_subarray_const negs);
     void        find_gate(Lit elim_lit, watch_subarray_const a, watch_subarray_const b);
     void        print_var_eliminate_stat(Lit lit) const;
-    bool        add_varelim_resolvent(vector<Lit>& finalLits, const ClauseStats& stats, bool is_xor);
+    bool        add_varelim_resolvent(cms_vector<Lit>& finalLits, const ClauseStats& stats, bool is_xor);
     void        update_varelim_complexity_heap();
     void        print_var_elim_complexity_stats(const uint32_t var) const;
 
@@ -466,12 +465,12 @@ private:
 
     struct Resolvents {
         uint32_t at = 0;
-        vector<vector<Lit>> resolvents_lits;
-        vector<ResolventData> resolvents_stats;
+        cms_vector<cms_vector<Lit>> resolvents_lits;
+        cms_vector<ResolventData> resolvents_stats;
         void clear() {
             at = 0;
         }
-        void add_resolvent(const vector<Lit>& res, const ClauseStats& stats, bool is_xor) {
+        void add_resolvent(const cms_vector<Lit>& res, const ClauseStats& stats, bool is_xor) {
             if (resolvents_lits.size() < at+1) {
                 resolvents_lits.resize(at+1);
                 resolvents_stats.resize(at+1);
@@ -481,7 +480,7 @@ private:
             resolvents_stats[at] = ResolventData(stats, is_xor);
             at++;
         }
-        vector<Lit>& back_lits() {
+        cms_vector<Lit>& back_lits() {
             assert(at > 0);
             return resolvents_lits[at-1];
         }
@@ -549,9 +548,9 @@ private:
     /////////////////////
     //Blocked clause elimination
     bool anythingHasBeenBlocked;
-    vector<Lit> blkcls;
-    vector<BlockedClauses> blockedClauses; ///<maps var(outer!!) to postion in blockedClauses
-    vector<uint32_t> blk_var_to_cls;
+    cms_vector<Lit> blkcls;
+    cms_vector<BlockedClauses> blockedClauses; ///<maps var(outer!!) to postion in blockedClauses
+    cms_vector<uint32_t> blk_var_to_cls;
     bool blockedMapBuilt;
     void buildBlockedMap();
     void cleanBlockedClauses();

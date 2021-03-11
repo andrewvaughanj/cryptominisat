@@ -28,8 +28,7 @@ THE SOFTWARE.
 #include "watcharray.h"
 #include "clause.h"
 #include "xor.h"
-#include <vector>
-using std::vector;
+#include "cms_vector.h"
 
 namespace CMSat {
 
@@ -45,7 +44,7 @@ class ClauseCleaner
 
         void clean_implicit_clauses();
         void remove_and_clean_all();
-        bool clean_xor_clauses(vector<Xor>& xors);
+        bool clean_xor_clauses(cms_vector<Xor>& xors);
         bool clean_clause(Clause& c);
         bool full_clean(Clause& cl);
 
@@ -60,7 +59,7 @@ class ClauseCleaner
 
             //We can only attach these in delayed mode, otherwise we would
             //need to manipulate the watchlist we are going through
-            vector<BinaryClause> toAttach;
+            cms_vector<BinaryClause> toAttach;
 
             void update_solver_stats(Solver* solver);
         };
@@ -77,10 +76,10 @@ class ClauseCleaner
 
         void clean_clauses_pre();
         void clean_clauses_post();
-        void clean_clauses_inter(vector<ClOffset>& cs);
+        void clean_clauses_inter(cms_vector<ClOffset>& cs);
 
         bool satisfied(const Watched& watched, Lit lit);
-        vector<ClOffset> delayed_free;
+        cms_vector<ClOffset> delayed_free;
 
         Solver* solver;
 };

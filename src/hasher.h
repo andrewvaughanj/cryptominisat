@@ -37,7 +37,7 @@ static inline uint64_t rotl(uint64_t x, uint64_t n)
 
 #define HASH_MULT_CONST 0x61C8864680B583EBULL
 
-static inline uint64_t clause_hash(vector<Lit> &clause)
+static inline uint64_t clause_hash(cms_vector<Lit> &clause)
 {
     //assert((sizeof(Lit) * clause.size()) % sizeof(unsigned long) == 0);
 

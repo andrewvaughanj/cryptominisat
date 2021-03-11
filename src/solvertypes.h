@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <sstream>
 #include <algorithm>
 #include <limits>
-#include <vector>
+#include "cms_vector.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -40,7 +40,6 @@ THE SOFTWARE.
 
 namespace CMSat {
 
-using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
@@ -668,18 +667,18 @@ inline void orderLits(
     assert(lit2 < lit3);
 }
 
-inline vector<Lit> sortLits(const vector<Lit>& lits)
+inline cms_vector<Lit> sortLits(const cms_vector<Lit>& lits)
 {
-    vector<Lit> tmp(lits);
+    cms_vector<Lit> tmp(lits);
 
     std::sort(tmp.begin(), tmp.end());
     return tmp;
 }
 
 template<typename T>
-inline vector<Lit> vars_to_lits(const T& vars)
+inline cms_vector<Lit> vars_to_lits(const T& vars)
 {
-    vector<Lit> ret;
+    cms_vector<Lit> ret;
     for(uint32_t var: vars) {
         ret.push_back(Lit(var, false));
     }

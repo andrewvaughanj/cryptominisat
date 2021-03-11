@@ -86,7 +86,7 @@ uint32_t SubsumeStrengthen::subsume_and_unlink_and_markirred(const ClOffset offs
 }
 template SubsumeStrengthen::Sub0Ret SubsumeStrengthen::subsume_and_unlink(
     const ClOffset offset
-    , const vector<Lit>& ps
+    , const cms_vector<Lit>& ps
     , const cl_abst_type abs
     , const bool removeImplicit
 );
@@ -382,8 +382,8 @@ void inline SubsumeStrengthen::fillSubs(
     const ClOffset offset
     , const T& cl
     , const cl_abst_type abs
-    , vector<ClOffset>& out_subsumed
-    , vector<Lit>& out_lits
+    , cms_vector<ClOffset>& out_subsumed
+    , cms_vector<Lit>& out_lits
     , const Lit lit
 ) {
     Lit litSub;
@@ -446,8 +446,8 @@ void SubsumeStrengthen::findStrengthened(
     ClOffset offset
     , const T& cl
     , const cl_abst_type abs
-    , vector<ClOffset>& out_subsumed
-    , vector<Lit>& out_lits
+    , cms_vector<ClOffset>& out_subsumed
+    , cms_vector<Lit>& out_lits
 )
 {
     #ifdef VERBOSE_DEBUG
@@ -723,7 +723,7 @@ template<class T> void SubsumeStrengthen::find_subsumed(
     const ClOffset offset //Will not match with index of the name value
     , const T& ps //Literals in clause
     , const cl_abst_type abs //Abstraction of literals in clause
-    , vector<ClOffset>& out_subsumed //List of clause indexes subsumed
+    , cms_vector<ClOffset>& out_subsumed //List of clause indexes subsumed
     , bool removeImplicit
 ) {
     #ifdef VERBOSE_DEBUG
@@ -801,7 +801,7 @@ template void SubsumeStrengthen::find_subsumed(
     const ClOffset offset
     , const std::array<Lit, 2>& ps
     , const cl_abst_type abs //Abstraction of literals in clause
-    , vector<ClOffset>& out_subsumed //List of clause indexes subsumed
+    , cms_vector<ClOffset>& out_subsumed //List of clause indexes subsumed
     , bool removeImplicit
 );
 
@@ -864,7 +864,7 @@ SubsumeStrengthen::Stats& SubsumeStrengthen::Stats::operator+=(const Stats& othe
 }
 
 SubsumeStrengthen::Sub1Ret SubsumeStrengthen::backw_sub_str_long_with_implicit(
-    const vector<Lit>& lits
+    const cms_vector<Lit>& lits
 ) {
     subs.clear();
     subsLits.clear();

@@ -69,7 +69,7 @@ namespace CMSat {
         CMSatPrivateData(const CMSatPrivateData&) = delete;
         CMSatPrivateData& operator=(const CMSatPrivateData&) = delete;
 
-        vector<Solver*> solvers;
+        cms_vector<Solver*> solvers;
         SharedData *shared_data = NULL;
         int which_solved = 0;
         std::atomic<bool>* must_interrupt;
@@ -83,7 +83,7 @@ namespace CMSat {
         //variables and clauses added/to add
         unsigned cls = 0;
         unsigned vars_to_add = 0;
-        vector<Lit> cls_lits;
+        cms_vector<Lit> cls_lits;
 
         //For single call setup
         uint32_t num_solve_simplify_calls = 0;
@@ -93,13 +93,13 @@ namespace CMSat {
         uint64_t previous_sum_conflicts = 0;
         uint64_t previous_sum_propagations = 0;
         uint64_t previous_sum_decisions = 0;
-        vector<double> cpu_times;
+        cms_vector<double> cpu_times;
     };
 }
 
 struct DataForThread
 {
-    explicit DataForThread(CMSatPrivateData* data, const vector<Lit>* _assumptions = NULL) :
+    explicit DataForThread(CMSatPrivateData* data, const cms_vector<Lit>* _assumptions = NULL) :
         solvers(data->solvers)
         , cpu_times(data->cpu_times)
         , lits_to_add(&(data->cls_lits))
@@ -116,11 +116,11 @@ struct DataForThread
         delete update_mutex;
         delete ret;
     }
-    vector<Solver*>& solvers;
-    vector<double>& cpu_times;
-    vector<Lit> *lits_to_add;
+    cms_vector<Solver*>& solvers;
+    cms_vector<double>& cpu_times;
+    cms_vector<Lit> *lits_to_add;
     uint32_t vars_to_add;
-    const vector<Lit> *assumptions;
+    const cms_vector<Lit> *assumptions;
     std::mutex* update_mutex;
     int *which_solved;
     lbool* ret;
@@ -425,11 +425,11 @@ struct OneThreadAddCls
         Solver& solver = *data_for_thread.solvers[tid];
         solver.new_external_vars(data_for_thread.vars_to_add);
 
-        vector<Lit> lits;
-        vector<uint32_t> vars;
+        cms_vector<Lit> lits;
+        cms_vector<uint32_t> vars;
         bool ret = true;
         size_t at = 0;
-        const vector<Lit>& orig_lits = (*data_for_thread.lits_to_add);
+        const cms_vector<Lit>& orig_lits = (*data_for_thread.lits_to_add);
         const size_t size = orig_lits.size();
         while(at < size && ret) {
             if (orig_lits[at] == lit_Undef) {
@@ -477,7 +477,7 @@ static bool actually_add_clauses_to_threads(CMSatPrivateData* data)
         OneThreadAddCls t(data_for_thread, 0);
         t.operator()();
     } else {
-        std::vector<std::thread> thds;
+        cms_vector<std::thread> thds;
         for(size_t i = 0; i < data->solvers.size(); i++) {
             thds.push_back(thread(OneThreadAddCls(data_for_thread, i)));
         }
@@ -603,7 +603,7 @@ DLL_PUBLIC void SATSolver::set_greedy_undef()
     exit(-1);
 }
 
-DLL_PUBLIC void SATSolver::set_sampling_vars(vector<uint32_t>* sampl_vars)
+DLL_PUBLIC void SATSolver::set_sampling_vars(cms_vector<uint32_t>* sampl_vars)
 {
     for (size_t i = 0; i < data->solvers.size(); ++i) {
         Solver& s = *data->solvers[i];
@@ -626,7 +626,7 @@ DLL_PUBLIC void SATSolver::set_timeout_all_calls(double timeout)
     data->timeout = timeout;
 }
 
-DLL_PUBLIC bool SATSolver::add_clause(const vector< Lit >& lits)
+DLL_PUBLIC bool SATSolver::add_clause(const cms_vector< Lit >& lits)
 {
     if (data->log) {
         (*data->log) << lits << " 0" << endl;
@@ -653,7 +653,7 @@ DLL_PUBLIC bool SATSolver::add_clause(const vector< Lit >& lits)
     return ret;
 }
 
-void add_xor_clause_to_log(const std::vector<unsigned>& vars, bool rhs, std::ofstream* file)
+void add_xor_clause_to_log(const cms_vector<unsigned>& vars, bool rhs, std::ofstream* file)
 {
     if (vars.size() == 0) {
         if (rhs) {
@@ -670,7 +670,7 @@ void add_xor_clause_to_log(const std::vector<unsigned>& vars, bool rhs, std::ofs
     }
 }
 
-DLL_PUBLIC bool SATSolver::add_xor_clause(const std::vector<unsigned>& vars, bool rhs)
+DLL_PUBLIC bool SATSolver::add_xor_clause(const cms_vector<unsigned>& vars, bool rhs)
 {
     if (data->log) {
        add_xor_clause_to_log(vars, rhs, data->log);
@@ -761,7 +761,7 @@ struct OneThreadCalc
 };
 
 lbool calc(
-    const vector< Lit >* assumptions,
+    const cms_vector< Lit >* assumptions,
     bool solve, CMSatPrivateData *data,
     bool only_sampling_solution = false
 ) {
@@ -810,7 +810,7 @@ lbool calc(
 
     //Multi-thread from now on.
     DataForThread data_for_thread(data, assumptions);
-    std::vector<std::thread> thds;
+    cms_vector<std::thread> thds;
     for(size_t i = 0
         ; i < data->solvers.size()
         ; i++
@@ -832,7 +832,7 @@ lbool calc(
     return real_ret;
 }
 
-DLL_PUBLIC lbool SATSolver::solve(const vector< Lit >* assumptions, bool only_sampling_solution)
+DLL_PUBLIC lbool SATSolver::solve(const cms_vector< Lit >* assumptions, bool only_sampling_solution)
 {
     if (data->promised_single_call
         && data->num_solve_simplify_calls > 0
@@ -853,7 +853,7 @@ DLL_PUBLIC lbool SATSolver::solve(const vector< Lit >* assumptions, bool only_sa
     return calc(assumptions, true, data, only_sampling_solution);
 }
 
-DLL_PUBLIC lbool SATSolver::simplify(const vector< Lit >* assumptions)
+DLL_PUBLIC lbool SATSolver::simplify(const cms_vector< Lit >* assumptions)
 {
     if (data->promised_single_call
         && data->num_solve_simplify_calls > 0
@@ -874,12 +874,12 @@ DLL_PUBLIC lbool SATSolver::simplify(const vector< Lit >* assumptions)
     return calc(assumptions, false, data);
 }
 
-DLL_PUBLIC const vector< lbool >& SATSolver::get_model() const
+DLL_PUBLIC const cms_vector< lbool >& SATSolver::get_model() const
 {
     return data->solvers[data->which_solved]->get_model();
 }
 
-DLL_PUBLIC const std::vector<Lit>& SATSolver::get_conflict() const
+DLL_PUBLIC const cms_vector<Lit>& SATSolver::get_conflict() const
 {
 
     return data->solvers[data->which_solved]->get_final_conflict();
@@ -1021,7 +1021,7 @@ void DLL_PUBLIC SATSolver::add_in_partial_solving_stats()
     data->interrupted = true;
 }
 
-DLL_PUBLIC std::vector<Lit> SATSolver::get_zero_assigned_lits() const
+DLL_PUBLIC cms_vector<Lit> SATSolver::get_zero_assigned_lits() const
 {
     return data->solvers[data->which_solved]->get_zero_assigned_lits();
 }
@@ -1057,19 +1057,19 @@ DLL_PUBLIC void SATSolver::log_to_file(std::string filename)
     }
 }
 
-DLL_PUBLIC std::vector<std::pair<Lit, Lit> > SATSolver::get_all_binary_xors() const
+DLL_PUBLIC cms_vector<std::pair<Lit, Lit> > SATSolver::get_all_binary_xors() const
 {
     return data->solvers[0]->get_all_binary_xors();
 }
 
-DLL_PUBLIC vector<std::pair<vector<uint32_t>, bool> >
+DLL_PUBLIC cms_vector<std::pair<cms_vector<uint32_t>, bool> >
 SATSolver::get_recovered_xors(bool xor_together_xors) const
 {
-    vector<std::pair<vector<uint32_t>, bool> > ret;
+    cms_vector<std::pair<cms_vector<uint32_t>, bool> > ret;
     Solver& s = *data->solvers[0];
 
-    std::pair<vector<uint32_t>, bool> tmp;
-    vector<Xor> xors = s.get_recovered_xors(xor_together_xors);
+    std::pair<cms_vector<uint32_t>, bool> tmp;
+    cms_vector<Xor> xors = s.get_recovered_xors(xor_together_xors);
     for(const auto& x: xors) {
         tmp.first = x.get_vars();
         tmp.second = x.rhs;
@@ -1188,7 +1188,7 @@ void DLL_PUBLIC SATSolver::start_getting_small_clauses(uint32_t max_len, uint32_
     data->solvers[0]->start_getting_small_clauses(max_len, max_glue);
 }
 
-bool DLL_PUBLIC SATSolver::get_next_small_clause(std::vector<Lit>& out)
+bool DLL_PUBLIC SATSolver::get_next_small_clause(cms_vector<Lit>& out)
 {
     assert(data->solvers.size() >= 1);
     return data->solvers[0]->get_next_small_clause(out);
@@ -1267,12 +1267,12 @@ DLL_PUBLIC void SATSolver::set_var_weight(Lit lit, double weight)
     }
 }
 
-DLL_PUBLIC vector<uint32_t> SATSolver::get_var_incidence()
+DLL_PUBLIC cms_vector<uint32_t> SATSolver::get_var_incidence()
 {
     return data->solvers[data->which_solved]->get_outside_var_incidence();
 }
 
-DLL_PUBLIC vector<uint32_t> SATSolver::get_var_incidence_also_red()
+DLL_PUBLIC cms_vector<uint32_t> SATSolver::get_var_incidence_also_red()
 {
     return data->solvers[data->which_solved]->get_outside_var_incidence_also_red();
 }
@@ -1295,8 +1295,8 @@ DLL_PUBLIC void SATSolver::set_no_confl_needed()
 
 
 DLL_PUBLIC bool SATSolver::implied_by(
-    const std::vector<Lit>& lits,
-    std::vector<Lit>& out_implied
+    const cms_vector<Lit>& lits,
+    cms_vector<Lit>& out_implied
 )
 {
     return data->solvers[data->which_solved]->implied_by(lits, out_implied);
