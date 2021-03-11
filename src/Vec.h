@@ -34,11 +34,19 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 
 #include "XAlloc.h"
 
-#define DEBUG_VEC
+// #define DEBUG_VEC
 
 #ifdef DEBUG_VEC
-#define TRACE_VEC std::cout << __FUNCTION__ << std::endl;
+#define ASSERT_VEC(x) assert(x)
+#ifdef USE_FOLLY
+#define TRACE_VEC                                          \
+    uint32_t orig_size = this->folly::fbvector<T>::size(); \
+    std::cout << __FUNCTION__ << " " << this->folly::fbvector<T>::size() << std::endl;
 #else
+#define TRACE_VEC std::cout << __FUNCTION__ << " " << this->size() << std::endl
+#endif
+#else
+#define ASSERT_VEC(x)
 #define TRACE_VEC
 #endif
 
@@ -60,94 +68,89 @@ class vec : public folly::fbvector<T>
    public:
     void growTo(uint32_t size)
     {
-        TRACE_VEC
+        TRACE_VEC;
         if (this->size() > size)
             return;
         this->resize(size);
-        assert(this->size() == size);
+        ASSERT_VEC(this->size() == size);
     }
     void growTo(uint32_t size, const T& pad)
     {
-        TRACE_VEC
+        TRACE_VEC;
         if (this->size() > size)
             return;
         this->resize(size, pad);
-        assert(this->size() == size);
+        ASSERT_VEC(this->size() == size);
     }
     void shrink(uint32_t nelems)
     {
-        TRACE_VEC
-        int orig_size = this->folly::fbvector<T>::size();
-        assert(nelems <= orig_size);
-        this->erase(this->begin(), this->begin() + nelems);
+        TRACE_VEC;
+        ASSERT_VEC(nelems <= orig_size);
+        this->erase(this->end() - nelems, this->end());
         this->folly::fbvector<T>::shrink_to_fit();
-        assert(this->size() == (orig_size - nelems));
+        ASSERT_VEC(this->size() == (orig_size - nelems));
     }
     void insert(uint32_t num)
     {
-        TRACE_VEC
-        int orig_size = this->folly::fbvector<T>::size();
+        TRACE_VEC;
         growTo(this->size() + num);
-        assert(this->size() == (orig_size + num));
+        ASSERT_VEC(this->size() == (orig_size + num));
     }
     void push()
     {
-        TRACE_VEC
-        int orig_size = this->folly::fbvector<T>::size();
-        T temp();
-        push(temp);
-        assert(this->size() == (orig_size + 1));
+        TRACE_VEC;
+        this->emplace_back(T());
+        ASSERT_VEC(this->size() == (orig_size + 1));
     }
     void push(const T& elem)
     {
-        TRACE_VEC
-        int orig_size = this->folly::fbvector<T>::size();
+        TRACE_VEC;
         this->push_back(elem);
-        assert(this->size() == (orig_size + 1));
+        ASSERT_VEC(this->size() == (orig_size + 1));
     }
     const T& last() const
     {
-        TRACE_VEC
+        TRACE_VEC;
         return this->back();
     }
     void pop()
     {
-        TRACE_VEC
-        int orig_size = this->folly::fbvector<T>::size();
+        TRACE_VEC;
         this->pop_back();
-        assert(this->size() == (orig_size + 1));
+        ASSERT_VEC(this->size() == (orig_size - 1));
     }
     void clear(bool dealloc = false)
     {
-        TRACE_VEC(void) dealloc;
+        TRACE_VEC;
+        (void)dealloc;
+        ASSERT_VEC(!dealloc);
         this->folly::fbvector<T>::clear();
         this->folly::fbvector<T>::shrink_to_fit();
-        assert(this->folly::fbvector<T>::size() == 0);
-        assert(this->folly::fbvector<T>::capacity() == 0);
+        ASSERT_VEC(this->folly::fbvector<T>::size() == 0);
+        ASSERT_VEC(this->folly::fbvector<T>::capacity() == 0);
     }
     void shrink_(uint32_t nelems)
     {
-        TRACE_VEC
-        int orig_size = this->folly::fbvector<T>::size();
-        shrink(nelems);
-        assert(this->size() == (orig_size - nelems));
+        TRACE_VEC;
+        ASSERT_VEC(nelems <= orig_size);
+        this->erase(this->end() - nelems, this->end());
+        this->folly::fbvector<T>::shrink_to_fit();
+        ASSERT_VEC(this->size() == (orig_size - nelems));
     }
     void moveTo(vec<T>& dest)
     {
-        TRACE_VEC
-        int orig_size = this->folly::fbvector<T>::size();
+        TRACE_VEC;
         dest.clear(true);
         dest = *this;
         clear();
-        int final_size = dest.folly::fbvector<T>::size();
-        assert(orig_size == final_size);
-        assert(this->size() == 0);
+        ASSERT_VEC(orig_size == dest.folly::fbvector<T>::size());
+        ASSERT_VEC(this->size() == 0);
     }
 };
 
-/* ^^^ USE FOLLY ^^^ */
+/* ^^^ USE_FOLLY ^^^ */
 #else
-/* vvv !USE FOLLY vvv */
+/* vvv !USE_FOLLY vvv */
 
 template<class T>
 class vec {
@@ -195,17 +198,9 @@ private:
 public:
     // Constructors:
     vec()                       : data(NULL) , sz(0)   , cap(0)    { }
-    explicit vec(uint32_t size)      : data(NULL) , sz(0)   , cap(0)
-    {
-        growTo(size);
-    }
-    vec(uint32_t size, const T& pad) : data(NULL) , sz(0)   , cap(0)
-    {
-        growTo(size, pad);
-    }
     ~vec()
     {
-        clear(true);
+        // clear(true);
     }
 
     // Size operations:
@@ -215,6 +210,7 @@ public:
     }
     void     shrink   (uint32_t nelems)
     {
+        TRACE_VEC;
         assert(nelems <= sz);
         for (uint32_t i = 0; i < nelems; i++) {
             sz--, data[sz].~T();
@@ -222,6 +218,7 @@ public:
     }
     void     shrink_  (uint32_t nelems)
     {
+        TRACE_VEC;
         assert(nelems <= sz);
         sz -= nelems;
     }
@@ -245,6 +242,7 @@ public:
     }
     void     push  (const T& elem)
     {
+        TRACE_VEC;
         if (sz == cap) {
             capacity(sz + 1);
         }
@@ -287,6 +285,7 @@ public:
     // Duplicatation (preferred instead):
     void copyTo(vec<T>& copy) const
     {
+        TRACE_VEC;
         copy.clear();
         copy.growTo(sz);
         for (uint32_t i = 0; i < sz; i++) {
@@ -295,6 +294,7 @@ public:
     }
     void moveTo(vec<T>& dest)
     {
+        TRACE_VEC;
         dest.clear(true);
         dest.data = data;
         dest.sz = sz;
@@ -305,12 +305,14 @@ public:
     }
     void swap(vec<T>& dest)
     {
+        TRACE_VEC;
         std::swap(dest.data, data);
         std::swap(dest.sz, sz);
         std::swap(dest.cap, cap);
     }
 
     void resize(uint32_t s) {
+        TRACE_VEC;
         if (s < sz) {
             shrink(sz - s);
         } else {
@@ -320,6 +322,7 @@ public:
 
     void insert(uint32_t num)
     {
+        TRACE_VEC;
         growTo(sz+num);
     }
 
@@ -382,6 +385,7 @@ void vec<T>::capacity(int32_t min_cap)
 template<class T>
 void vec<T>::growTo(uint32_t size, const T& pad)
 {
+    TRACE_VEC;
     if (sz >= size) {
         return;
     }
@@ -396,6 +400,7 @@ void vec<T>::growTo(uint32_t size, const T& pad)
 template<class T>
 void vec<T>::growTo(uint32_t size)
 {
+    TRACE_VEC;
     if (sz >= size) {
         return;
     }
@@ -410,6 +415,7 @@ void vec<T>::growTo(uint32_t size)
 template<class T>
 void vec<T>::clear(bool dealloc)
 {
+    TRACE_VEC;
     if (data != NULL) {
         for (uint32_t i = 0; i < sz; i++) {
             data[i].~T();
@@ -424,6 +430,7 @@ void vec<T>::clear(bool dealloc)
 template<>
 inline void vec<Watched>::clear(bool dealloc)
 {
+    TRACE_VEC;
     if (data != NULL) {
         sz = 0;
         if (dealloc) {
@@ -431,7 +438,7 @@ inline void vec<Watched>::clear(bool dealloc)
         }
     }
 }
-/* ^^^ !USE FOLLY ^^^ */
+/* ^^^ !USE_FOLLY ^^^ */
 #endif
 
 //=================================================================================================
